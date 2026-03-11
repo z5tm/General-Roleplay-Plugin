@@ -202,7 +202,7 @@ public sealed class KeycardHandler : CustomItemHandler
                     return;
                 ev.IsAllowed = true;
                 break;
-            case LockerType.Pedestal:
+            case LockerType.AntiScp207Pedestal: // temporary, cuz like. they made every pedestal into its own separate thing apparently !
                 ev.IsAllowed = false;
                 if (!Container.HasItem(ev.Player.CurrentItem.Serial, out card))
                     return;
@@ -295,11 +295,10 @@ public sealed class KeycardHandler : CustomItemHandler
                 DoorType.PrisonDoor => new Permissions(2, Levels.Security),
                 DoorType.HczArmory => new Permissions(2, Levels.Security),
                 DoorType.LczArmory => new Permissions(2, Levels.Security),
-                DoorType.NukeArmory => new Permissions(2, Levels.Security),
                 DoorType.Scp079Armory => new Permissions(2, Levels.Security),
 
                 DoorType.HIDChamber => new Permissions(2, Levels.Containment),
-                DoorType.HIDUpper => new Permissions(2, Levels.Containment),
+                DoorType.HIDLab => new Permissions(2, Levels.Containment),
 
                 DoorType.Intercom => new Permissions(4),
 
