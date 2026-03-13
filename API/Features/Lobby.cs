@@ -11,6 +11,7 @@ using CustomItems;
 using Department;
 using Exiled.API.Enums;
 using Exiled.API.Features;
+using Exiled.API.Features.Doors;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Permissions.Extensions;
 using Extensions;
@@ -97,7 +98,7 @@ public class UseLobbyCommand : ICommand
 
         exUser.Broadcast(5, "REMEMBER TO USE \"BEGINROLEPLAY\"", Broadcast.BroadcastFlags.AdminChat);
 
-        if(!Plugin.Singleton.Config.LobbySchematic.IsEmpty())
+        if(!Plugin.Singleton?.Config?.LobbySchematic.IsEmpty() == false)
             Lobby.Schematic = ObjectSpawner.SpawnSchematic(Plugin.Singleton.Config.LobbySchematic, Vector3.zero, Vector3.zero);
 
         Round.Start();
@@ -113,7 +114,7 @@ public class UseLobbyCommand : ICommand
         TeslaGate.IsEnabled = false;
         SpawnWaves.IsEnabled = false;
 
-        // Door.LockAll(999999, DoorLockType.AdminCommand);
+        Door.LockAll(999999, DoorLockType.AdminCommand);
 
         foreach (var player in ExPlayer.List) Lobby.Action(player);
 
