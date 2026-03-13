@@ -7,10 +7,7 @@ using Exiled.API.Features;
 using Extensions;
 using MEC;
 using PlayerRoles;
-using UnityEngine;
 using UserSettings.ServerSpecific;
-using UserSettings.ServerSpecific.Entries;
-using Random = System.Random;
 
 /// <summary>
 /// This example shows an ability to organize longer lists of entries by introducing a page selector.
