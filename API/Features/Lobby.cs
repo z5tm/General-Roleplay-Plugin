@@ -33,7 +33,6 @@ public abstract class Lobby
     public static bool HasRoleplayStarted;
     public static SchematicObject Schematic;
 
-    public static Vector3 SpawnPosition = Plugin.Singleton.Config.LobbySpawnLocation;
     public static string Site = "22";
 
     [OnPluginEnabled]
@@ -71,7 +70,7 @@ public abstract class Lobby
         if (!IsLobby) return;
 
         player.Role.Set(RoleTypeId.Tutorial, SpawnReason.None, RoleSpawnFlags.All);
-        Timing.CallDelayed(Timing.WaitForOneFrame, () => player.Position = SpawnPosition);
+        Timing.CallDelayed(Timing.WaitForOneFrame, () => player.Position = Plugin.Singleton.Config.LobbySpawnLocation);
         Timing.CallDelayed(0.2f, () => player.ShowHint("<b>Welcome to the lobby!</b>\n<b>Pick a role in the Server-Specific tab in your Settings!</b>",10f));
     }
 }
