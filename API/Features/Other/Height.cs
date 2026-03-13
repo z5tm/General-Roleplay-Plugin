@@ -21,7 +21,7 @@ public abstract class Height
 public class HeightEnable : ICommand
 {
     public string Command => "HeightEnable";
-    public string[] Aliases => ["HeightOn", "OnHeight", "EnableHeight"];
+    public string[] Aliases => ["HeightOn", "OnHeight", "EnableHeight", "h1"];
     public string Description => "Enables the Height Client Command";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
@@ -29,13 +29,13 @@ public class HeightEnable : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Height Client Command is already Enabled";
+        response = "<color=red>Height Client Command is already</color> <color=green>Enabled</color>";
         if (Height.IsEnabled)
             return false;
 
         Height.IsEnabled = !Height.IsEnabled;
 
-        response = "<color=green>Height Client Command is now Enabled";
+        response = "<color=green>Height Client Command is now Enabled</color>";
         return true;
     }
 }
@@ -44,7 +44,7 @@ public class HeightEnable : ICommand
 public class HeightDisable : ICommand
 {
     public string Command => "HeightDisable";
-    public string[] Aliases => ["HeightOff", "OffHeight", "DisableHeight"];
+    public string[] Aliases => ["HeightOff", "OffHeight", "DisableHeight", "h0"];
     public string Description => "Disables the Height Client Command";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
@@ -52,13 +52,13 @@ public class HeightDisable : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Height Client Command is already Disabled";
+        response = "<color=green>Height Client Command is already</color> <color=red>Disabled</color>";
         if (!Height.IsEnabled)
             return false;
 
         Height.IsEnabled = !Height.IsEnabled;
 
-        response = "<color=green>Height Client Command is now Disabled";
+        response = "<color=green>Height Client Command is now</color> <color=red>Disabled</color>";
         return true;
     }
 }
@@ -112,7 +112,7 @@ public class HeightClient : ICommand
         var final = valueCm / 183f;
         final = Mathf.Clamp(final, 0.9f, 1.1f);
 
-        response = "You are an SCP";
+        response = "You are an SCP!";
         if (player.IsScp)
             return false;
         player.Scale = Vector3.one * final;

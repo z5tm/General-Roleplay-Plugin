@@ -13,7 +13,7 @@ public class Warp : ICommand
 
     public string[] Aliases => ["wrp"];
 
-    public string Description => "Warp's you in and out of Reality";
+    public string Description => "Toggles invisibility, and explodes a ghostbulb that has no effect.";
 
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
@@ -27,10 +27,11 @@ public class Warp : ICommand
             player.DisableEffect<Invisible>();
         else
             player.EnableEffect<Invisible>();
+        //player.EnableEffect<Fade>(); ( i wanna do smt with this later )
 
-        player.ExplodeEffect(ProjectileType.Scp2176);
+        player.ExplodeEffect(ProjectileType.Scp2176); // doesn't actually affect the room! how cool!
 
-        response = "<color=green>Bending through reality";
+        response = "<color=green>Manipulating reality..</color>";
         return true;
     }
 }

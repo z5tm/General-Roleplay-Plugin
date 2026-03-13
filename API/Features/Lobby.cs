@@ -15,6 +15,7 @@ using Exiled.API.Features.Doors;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Permissions.Extensions;
 using Extensions;
+using GameCore;
 using Items;
 using MEC;
 using Other;
@@ -25,7 +26,6 @@ using ProjectMER.Features.ToolGun;
 using UnityEngine;
 using Broadcast = Broadcast;
 using Random = System.Random;
-using TeslaGate = Other.TeslaGate;
 
 public abstract class Lobby
 {
@@ -80,7 +80,7 @@ public abstract class Lobby
 public class UseLobbyCommand : ICommand
 {
     public string Command => "UseLobby";
-    public string[] Aliases => ["LobbyUse", "OpenLobby", "LobbyOpen"];
+    public string[] Aliases => ["LobbyUse", "OpenLobby", "LobbyOpen", "lobopen", "openlob", "lobon", "l1"];
     public string Description => "Open the Lobby so no people can spawn, with teleporting everyone";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
@@ -98,8 +98,9 @@ public class UseLobbyCommand : ICommand
 
         exUser.Broadcast(5, "REMEMBER TO USE \"BEGINROLEPLAY\"", Broadcast.BroadcastFlags.AdminChat);
 
-        if(!Plugin.Singleton?.Config?.LobbySchematic.IsEmpty() == false)
-            Lobby.Schematic = ObjectSpawner.SpawnSchematic(Plugin.Singleton.Config.LobbySchematic, Vector3.zero, Vector3.zero);
+        var lobbySchematic = Plugin.Singleton?.Config?.LobbySchematic;
+        if(!string.IsNullOrEmpty(lobbySchematic))
+            Lobby.Schematic = ObjectSpawner.SpawnSchematic(lobbySchematic, Vector3.zero, Vector3.zero);
 
         Round.Start();
         Round.IsLocked = true;
@@ -111,7 +112,7 @@ public class UseLobbyCommand : ICommand
         Name.IsEnabled = true;
         Scp914.IsEnabled = true;
 
-        TeslaGate.IsEnabled = false;
+        TeslaGate12.IsEnabled = false;
         SpawnWaves.IsEnabled = false;
 
         Door.LockAll(999999, DoorLockType.AdminCommand);
@@ -128,7 +129,7 @@ public class UseLobbyCommand : ICommand
 public class ReuseLobbyCommand : ICommand
 {
     public string Command => "ReuseLobby";
-    public string[] Aliases => ["ReopenLobby", "LobbyReopen", "LobbyReuse"];
+    public string[] Aliases => ["ReopenLobby", "LobbyReopen", "LobbyReuse", "Relob"];
     public string Description => "Reopens the Lobby so no people can spawn, without teleporting everyone";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
@@ -145,7 +146,8 @@ public class ReuseLobbyCommand : ICommand
         if (Lobby.IsLobby)
             return false;
 
-        if(!Plugin.Singleton.Config.LobbySchematic.IsEmpty())
+        var lobbySchematic = Plugin.Singleton?.Config?.LobbySchematic;
+        if(!string.IsNullOrEmpty(lobbySchematic))
             Lobby.Schematic = ObjectSpawner.SpawnSchematic(Plugin.Singleton.Config.LobbySchematic, Vector3.zero, Vector3.zero);
 
         Lobby.IsLobby = true;
@@ -166,7 +168,7 @@ public class ReuseLobbyCommand : ICommand
 public class StopLobbyCommand : ICommand
 {
     public string Command => "StopLobby";
-    public string[] Aliases => ["CloseLobby", "EndLobby", "LobbyClose", "LobbyEnd"];
+    public string[] Aliases => ["CloseLobby", "EndLobby", "LobbyClose", "LobbyEnd", "loboff", "lobbyoff", "l0"];
     public string Description => "Closes the Lobby so no one can spawn";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
@@ -199,7 +201,7 @@ public class StopLobbyCommand : ICommand
 public class BeginRoleplay : ICommand
 {
     public string Command => "StartRoleplay";
-    public string[] Aliases => ["BeginRoleplay", "RoleplayStart"];
+    public string[] Aliases => ["BeginRoleplay", "RoleplayStart", "startrp", "rp1"];
     public string Description => "Starts the Roleplay (THIS COMMAND IS REQUIRED)";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
@@ -224,9 +226,13 @@ public class BeginRoleplay : ICommand
 
         Lobby.HasRoleplayStarted = true;
         foreach (var player in ExPlayer.List)
-            Timing.RunCoroutine(player.ScomPlayer().TrackHours());
+        {
+            var scom = player.ScomPlayer();
+            if (scom ==null) continue;
+            Timing.RunCoroutine(scom.TrackHours());
+        }
         GiveInventories();
-        response = "<color=green>Game on!";
+        response = "<color=green>Ezpz";
         return true;
     }
 
@@ -236,22 +242,22 @@ public class BeginRoleplay : ICommand
             return;
         foreach (var player in ExPlayer.List)
         {
-            player.ClearAmmo();
-            player.ClearInventory();
-            if (player.ScomPlayer().CurrentRole.RoleEntry == null)
+            player.ClearInventory(); // ClearAmmo is redundant here, ClearInventory already clears ammo & items. ClearItems clears only items, ClearAmmo clears only ammo, but this clears everything
+            var scom = player.ScomPlayer();
+            if (scom?.CurrentRole?.RoleEntry == null)
                 continue;
-            if (player.ScomPlayer().CurrentRole.Rank == null)
+            if (scom.CurrentRole?.Rank == null)
                 continue;
-            foreach (var item in player.ScomPlayer().CurrentRole.Rank.LoadOut)
+            foreach (var item in scom.CurrentRole.Rank.LoadOut)
             {
                 var itemGiver = GetItem(item, out var cost, player);
                 if (itemGiver == null)
                     continue;
-                Department.Department.DepartmentsData[Department.Department.GetDepartmentByRole(player.ScomPlayer().CurrentRole.RoleEntry)].Balance -= cost;
+                Department.Department.DepartmentsData[Department.Department.GetDepartmentByRole(scom.CurrentRole.RoleEntry)].Balance -= cost;
                 itemGiver.GiveItem(player);
             }
 
-            Department.Department.UpdateDepartmentData(Department.Department.GetDepartmentByRole(player.ScomPlayer().CurrentRole.RoleEntry));
+            Department.Department.UpdateDepartmentData(Department.Department.GetDepartmentByRole(scom.CurrentRole.RoleEntry));
         }
     }
 
@@ -313,7 +319,10 @@ public class BeginRoleplay : ICommand
 
         var roleName = "SCP";
         if (player != null)
-            roleName = player.ScomPlayer().CurrentRole.RoleName;
+        {
+            var scom = player.ScomPlayer();
+            roleName = scom?.CurrentRole?.RoleName ?? roleName;
+        }
 
         return item.ItemType.ToLower().StartsWith("keycard") ? KeycardHandler.CreateInstance(itemType, roleName, item.Level.Value, item.Permissions.ConvertAll(x => (KeycardHandler.Levels)Enum.Parse(typeof(KeycardHandler.Levels), x)).ToArray()) : itemType;
     }
@@ -323,7 +332,7 @@ public class BeginRoleplay : ICommand
 public class SetSite : ICommand
 {
     public string Command => "SetSite";
-    public string[] Aliases => ["SiteSet"];
+    public string[] Aliases => ["SiteSet", "unusedpos"];
     public string Description => "Sets the Site of the current Roleplay";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)

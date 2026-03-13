@@ -162,55 +162,7 @@ public abstract class Name
         "Hoover", "Schmidt", "Kaiser", "Espinoza", "White", "Maynard", "Berg", "Strong", "Andrews", "Zhang", "Pratt",
         "Vincent", "Ochoa", "Pace", "Mann", "Adkins", "King", "Cisneros", "Paul", "Velazquez", "Morales", "Bolton",
         "Faulkner", "Braun", "Meza", "Diaz", "Leonard", "Booker", "Cooley", "Hatfield", "Mclaughlin", "Barker", "James",
-        "Murillo", "Cummings", "Barnes", "Mcconnell", "Russo", "Potter", "Joseph", "Johns", "Perkins", "Jarvis",
-        "Barber", "Webb", "Cameron", "Garner", "Waller", "Bonilla", "Miles", "Gallegos", "Simmons", "Conway", "Page",
-        "Rhodes", "Ford", "Watkins", "French", "Luna", "Pearson", "Williamson", "Dudley", "Dalton", "Mayer", "Hester",
-        "Frey", "Bird", "Williams", "Monroe", "Bowers", "Harmon", "Schmitt", "Odonnell", "Sparks", "Terry", "Barnett",
-        "Mcclain", "Rojas", "Gates", "Blackburn", "Koch", "Franco", "Davila", "Meadows", "Vaughan", "Frederick",
-        "Bridges", "Shaw", "Boyd", "Weber", "Moses", "Duncan", "Warren", "Bush", "Thomas", "Montgomery", "Giles",
-        "Hurst", "Acosta", "Chapman", "Kemp", "Atkins", "Burton", "Casey", "Boyer", "Hernandez", "Tucker", "Pugh",
-        "Solis", "Morton", "Knapp", "Henry", "Parsons", "Long", "Ware", "Mccullough", "Delgado", "Knox", "Whitehead",
-        "Bradley", "Gill", "Montoya", "Cox", "Browning", "Spence", "Sherman", "Haynes", "Becker", "Shah", "Mckinney",
-        "Mason", "Kidd", "Ferrell", "Allen", "Fritz", "Lutz", "Stewart", "Higgins", "Webster", "Blevins", "Ellis",
-        "Nolan", "Lozano", "Schneider", "Lindsey", "Odom", "Yang", "Conley", "Love", "Blair", "Stokes", "Lowe", "Chase",
-        "Baxter", "Pennington", "Oconnell", "Glass", "Mccoy", "Moran", "Turner", "Woodward", "Hebert", "Massey",
-        "Patel", "Decker", "Curtis", "Garrett", "Abbott", "Ruiz", "Clay", "Franklin", "Walsh", "Lloyd", "Munoz",
-        "Obrien", "Morrow", "Mccarthy", "Haley", "Burnett", "Kane", "Buck", "Wood", "Benitez", "Barajas", "Campos",
-        "Ashley", "Montes", "Daugherty", "Werner", "Holt", "Carey", "Rodgers", "Sawyer", "Wade", "Hubbard", "Guerra",
-        "Chen", "Madden", "Berry", "Townsend", "Mosley", "Burch", "Snyder", "Boyle", "Fleming", "Donaldson", "Stanton",
-        "Rowland", "Cervantes", "Simpson", "Harris", "Singleton", "Reilly", "Huynh", "Proctor", "Kent", "Boone",
-        "Woods", "Sheppard", "Dougherty", "Bell", "Durham", "Foley", "Dorsey", "Good", "Gray", "Brady", "Dunlap",
-        "Robertson", "Hooper", "Holder", "Yates", "Schaefer", "Hammond", "Schwartz", "Evans", "Velasquez", "Short",
-        "Estrada", "Wilkerson", "Floyd", "Potts", "Landry", "Barrera", "David", "Roy", "Jackson", "Dickson", "Salazar",
-        "Mcneil", "Haas", "Branch", "Lane", "Crane", "Oconnor", "Baldwin", "Lamb", "Bray", "Keller", "Bruce", "Rogers",
-        "Mora", "Fitzgerald", "Herring", "Hensley", "Bowman", "Rose", "Fowler", "Goodman", "Phillips", "Wilcox",
-        "Carroll", "Lambert", "Morris", "Fields", "Grant", "Kirk", "Erickson", "Ibarra", "Oliver", "Lester", "Rollins",
-        "Kelley", "Carson", "Farmer", "Wright", "Gonzales", "Church", "Nelson", "Walton", "Suarez", "Porter", "Stark",
-        "Barron", "Mccarty", "Wong", "Morse", "Scott", "Navarro", "Snow", "Cannon", "Clayton", "Mendoza", "Nielsen",
-        "Galvan", "Cunningham", "Hardin", "Lawson", "Esparza", "Gardner", "Ritter", "Raymond", "Wells", "Garza",
-        "Farley", "Keith", "Camacho", "Ryan", "Park", "Hale", "Benton", "Beasley", "Bright", "Atkinson", "Harrell",
-        "Weeks", "Bradford", "Charles", "Hardy", "Fisher", "Dawson", "Reynolds", "Stuart", "Tate", "Gonzalez",
-        "Bautista", "Day", "Soto", "Benjamin", "Hanson", "Galloway", "Allison", "Garrison", "Clements", "Peck", "Petty",
-        "Poole", "Sloan", "Cordova", "May", "Zamora", "Roth", "Hancock", "Hodges", "Melton", "Whitaker", "Norman",
-        "Frazier", "Mayo", "Walter", "Dennis", "Murphy", "Pope", "Hall", "Newman", "York", "Petersen", "Collins",
-        "Gentry", "Washington", "Valencia", "Wilkinson", "Gould", "Carpenter", "Crosby", "Nash", "Everett", "Flynn",
-        "Howell", "Crawford", "Escobar", "Mcknight", "Mcdaniel", "Spencer", "Maldonado", "Mejia", "Austin", "Case",
-        "Drake", "Ball", "Jones", "Mckee", "Howe", "Doyle", "Beltran", "Swanson", "Bond", "Shepherd", "Morrison", "Liu",
-        "Ortiz", "Cain", "Briggs", "Brock", "Griffith", "Hill", "Guerrero", "Arellano", "Fernandez", "Stanley",
-        "Chavez", "Ho", "Bates", "Curry", "Cuevas", "Blanchard", "Reed", "Mcguire", "Chung", "Bryan", "Hayes", "Ewing",
-        "Lucas", "Stafford", "Lyons", "Rich", "Hays", "Mullen", "Riddle", "Neal", "Cook", "Skinner", "Daniels",
-        "Greene", "Gross", "Santiago", "House", "Wolf", "Weiss", "Perry", "Hunter", "Cobb", "Dunn", "Griffin",
-        "Patrick", "Moyer", "Gibbs", "Tapia", "Marks", "Lam", "Zimmerman", "Savage", "Ponce", "Choi", "Kline",
-        "Bradshaw", "Frye", "Hudson", "Green", "Mathis", "Leach", "Byrd", "Walters", "Black", "Marquez", "Noble",
-        "Mcbride", "Newton", "Howard", "Dominguez", "Buckley", "Coleman", "Sullivan", "Pruitt", "Contreras", "Rangel",
-        "Ortega", "Mcintyre", "Valdez", "Kaufman", "Vance", "Gilbert", "Heath", "Colon", "Mcfarland", "Hendricks",
-        "Perez", "Prince", "Cochran", "Pollard", "Vazquez", "Fuller", "Patterson", "Jordan", "Davidson", "Guzman",
-        "Peterson", "Pena", "Reese", "Larsen", "Martin", "Arroyo", "Mcgrath", "Chambers", "Hayden", "Phelps", "Yu",
-        "Hull", "Blankenship", "Greer", "Shea", "Valentine", "Richards", "Pitts", "Mcgee", "Fox", "Downs", "Ayers",
-        "Stevenson", "Gallagher", "Mcmillan", "Acevedo", "Weaver", "Reeves", "Farrell", "Mcmahon", "Mahoney", "Mckay",
-        "Hendrix", "Dickerson", "Quinn", "Chaney", "Wallace", "Terrell", "Hawkins", "Juarez", "Owen", "Sanford",
-        "Dillon", "Mays", "Rivera", "Lang", "Ali", "Edwards", "Gomez", "Hansen", "Hines", "Brandt", "Zuniga", "Ward",
-        "Hickman", "Bernard"
+        "Murillo"
     ];
 
     [OnPluginEnabled]
@@ -231,13 +183,13 @@ public class NameEnable : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Name Client Command is already Enabled";
+        response = "<color=red>Name Client Command is already</color> <color=green>Enabled</color>";
         if (Name.IsEnabled)
             return false;
 
         Name.IsEnabled = !Name.IsEnabled;
 
-        response = "<color=green>Name Client Command is now Enabled";
+        response = "<color=green>Name Client Command is now Enabled</color>";
         return true;
     }
 }
@@ -246,7 +198,7 @@ public class NameEnable : ICommand
 public class NameDisable : ICommand
 {
     public string Command => "NameDisable";
-    public string[] Aliases => ["NameOff", "OffName", "DisableName"];
+    public string[] Aliases => ["NameOff", "OffName", "DisableName", "NoName"];
     public string Description => "Disables the Name Client Command";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
@@ -254,13 +206,13 @@ public class NameDisable : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Name Client Command is already Disabled";
+        response = "<color=green>Name Client Command is already</color> <color=red>Disabled</color>";
         if (!Name.IsEnabled)
             return false;
 
         Name.IsEnabled = !Name.IsEnabled;
 
-        response = "<color=green>Name Client Command is now Disabled";
+        response = "<color=green>Name Client Command is now</color> <color=red>Disabled</color>";
         return true;
     }
 }

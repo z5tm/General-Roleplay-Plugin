@@ -122,6 +122,6 @@ public sealed class TaserHandler : CustomItemHandler
         firearm.MagazineAmmo = 1;
 
         Container.RegisterItem(item.Base);
-        return item.Base;
+        return item.Base; // so atm i think i can confirm at minimum THIS section is being called, but unsure of what else
     }
 }
