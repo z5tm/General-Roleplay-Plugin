@@ -50,7 +50,7 @@ public class ToggleScpChat : ICommand
 
         if (arguments.Count != 1)
         {
-            response = "Invalid arguments. Usage: scpchat ?(id)";
+            response = "Invalid arguments. Usage: scpchat (optional id)";
             return false;
         }
 
@@ -69,10 +69,10 @@ public class ToggleScpChat : ICommand
         if (!ToggledPlayers.Add(player))
         {
             ToggledPlayers.Remove(player);
-            response = $"You have disabled SCP chat for {player.Nickname}.";
+            response = $"You have disabled SCP chat for {player.Nickname}, ID {player.Id}";
         }
         else
-            response = $"You have enabled SCP chat for {player.Nickname}.";
+            response = $"You have enabled SCP chat for {player.Nickname}, ID {player.Id}."; // noting that UserId is SteamID64 :sob:
 
         return true;
     }
