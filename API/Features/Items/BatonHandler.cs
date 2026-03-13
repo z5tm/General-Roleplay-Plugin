@@ -65,7 +65,7 @@ public sealed class BatonHandler : CustomItemHandler
         ev.Player.EnableEffect(EffectType.Deafened, 5f);
         ev.Player.EnableEffect(EffectType.Flashed, 2f);
         ev.Player.EnableEffect(EffectType.Disabled, 5f);
-        ev.Player.EnableEffect(EffectType.Traumatized, 50f);
+        //ev.Player.EnableEffect(EffectType.Traumatized, 50f); ermmm why did it make you traumatized LMAOO
     }
 
     private void ChargeJailBird(ChargingJailbirdEventArgs ev)
