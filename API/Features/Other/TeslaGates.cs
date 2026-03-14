@@ -3,7 +3,6 @@
 using System;
 using Attributes;
 using CommandSystem;
-using Exiled.API.Features;
 using Extensions;
 
 public static class TeslaGate12
@@ -21,10 +20,9 @@ public static class TeslaGate12
     {
         if (!IsEnabled)
         {
+            ev.IsAllowed = false;
             ev.DisableTesla = true;
             ev.IsTriggerable = false;
-            ev.IsInHurtingRange = false;
-            ev.IsInIdleRange = false;
         }
     }
 
@@ -32,43 +30,27 @@ public static class TeslaGate12
 }
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
-public class TeslaGateEnable : ICommand
+public class TeslaGateToggle : ICommand
 {
-    public string Command => "TeslaGateOn";
-    public string[] Aliases => ["EnableTeslaGate", "TeslaGateEnable"];
-    public string Description => "Enables the Tesla Gates";
+    public string Command => "TeslaGateToggle";
+    public string[] Aliases => ["ToggleTeslaGate", "ToggleTeslas", "TeslasToggle", "ToggleTesla", "TeslaToggle"];
+    public string Description => "Toggles the Tesla Gates";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Tesla Gates are already</color> <color=green>Enabled</color>";
         if (TeslaGate12.IsEnabled)
-            return false;
+        {
+            response = "<color=red>Tesla Gates are now Disabled</color>";
+        }
 
-        TeslaGate12.IsEnabled = !TeslaGate12.IsEnabled;
-        response = "<color=green>Tesla Gates are now Enabled</color>";
-        return true;
-    }
-}
-[CommandHandler(typeof(RemoteAdminCommandHandler))]
-public class TeslaGateDisable : ICommand
-{
-    public string Command => "TeslaGateOff";
-    public string[] Aliases => ["DisableTeslaGate", "TeslaGateDisable"];
-    public string Description => "Disables Tesla Gates";
-
-    public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
-    {
-        if (!sender.CheckRemoteAdmin(out response))
-            return false;
-
-        response = "<color=green>Tesla Gates are already</color> <color=red>Disabled</color>";
         if (!TeslaGate12.IsEnabled)
-            return false;
+        {
+            response = "<color=green>Tesla Gates are now Enabled</color>";
+        }
+        
         TeslaGate12.IsEnabled = !TeslaGate12.IsEnabled;
-        response = "<color=green>Tesla Gates are now</color> <color=red>Disabled</color>";
         return true;
-    }
 }

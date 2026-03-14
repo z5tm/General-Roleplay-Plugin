@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AssemblyTitle>Site12</AssemblyTitle>
         <Product>Site12</Product>
-        <TargetFramework>net481</TargetFramework>
+        <TargetFramework>net48</TargetFramework>
         <LangVersion>12.0</LangVersion>
         <MapFileExtensions>true</MapFileExtensions>
         <OutDir>bin\$(Configuration)_$(Platform)\</OutDir>
@@ -31,22 +31,6 @@
 
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="ProjectMer" HintPath="lib/ProjectMER.dll" Private="False" />
-        <Reference Include="Mirror" HintPath="lib/Mirror-Publicized.dll" Private="False" />
-        <Reference Include="AudioPlayer" HintPath="lib/AudioPlayer.dll" Private="False" />
-        <Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)\Assembly-CSharp-Publicized.dll" Private="False" />
-        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll" Private="False" />
-        <Reference Include="Pooling" HintPath="$(SL_REFERENCES)\Pooling.dll" Private="False" />
-        <Reference Include="Unity.TextMeshPro" HintPath="$(SL_REFERENCES)\Unity.TextMeshPro.dll" Private="False" />
-        <Reference Include="UnityEngine" HintPath="$(SL_REFERENCES)\UnityEngine.dll" Private="False" />
-        <Reference Include="UnityEngine.AIModule" HintPath="$(SL_REFERENCES)\UnityEngine.AIModule.dll" Private="False" />
-        <Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" Private="False" />
-        <Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" Private="False" />
-        <Reference Include="UnityEngine.AnimationModule" HintPath="$(SL_REFERENCES)\UnityEngine.AnimationModule.dll" Private="False" />
-        <Reference Include="UnityEngine.TerrainModule" HintPath="$(SL_REFERENCES)\UnityEngine.TerrainModule.dll" Private="False" />
-    </ItemGroup>
     <ItemGroup>
         <_DepsDlls Include="$(MSBuildProjectDirectory)\deps\*.dll" />
     </ItemGroup>
@@ -55,6 +39,78 @@
         <Reference Include="@(_DepsDlls->'%(Filename)')">
             <HintPath>%(Identity)</HintPath>
             <Private>False</Private>
+        </Reference>
+        <Reference Include="ASS-Exiled">
+          <HintPath>..\..\..\..\Downloads\ASS-Exiled.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp-firstpass">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+        </Reference>
+        <Reference Include="AudioPlayer">
+          <HintPath>..\..\..\..\Downloads\AudioPlayer.dll</HintPath>
+        </Reference>
+        <Reference Include="BouncyCastle.Cryptography">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\BouncyCastle.Cryptography.dll</HintPath>
+        </Reference>
+        <Reference Include="CommandSystem.Core">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\CommandSystem.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="CustomPasses">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\CustomPasses.dll</HintPath>
+        </Reference>
+        <Reference Include="DnsClient">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\DnsClient.dll</HintPath>
+        </Reference>
+        <Reference Include="Facepunch.Steamworks.Win64">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
+        </Reference>
+        <Reference Include="Interop">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Interop.dll</HintPath>
+        </Reference>
+        <Reference Include="LabApi">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\LabApi.dll</HintPath>
+        </Reference>
+        <Reference Include="Mirror">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mirror.dll</HintPath>
+        </Reference>
+        <Reference Include="Mirror.Components">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mirror.Components.dll</HintPath>
+        </Reference>
+        <Reference Include="Mono.Security">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mono.Security.dll</HintPath>
+        </Reference>
+        <Reference Include="NorthwoodLib">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\NorthwoodLib.dll</HintPath>
+        </Reference>
+        <Reference Include="Pooling">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Pooling.dll</HintPath>
+        </Reference>
+        <Reference Include="ProjectMER">
+          <HintPath>..\..\..\..\Downloads\ProjectMER.dll</HintPath>
+        </Reference>
+        <Reference Include="Snake">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Snake.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.Burst">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Unity.Burst.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AnimationModule">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule">
+          <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -106,5 +162,9 @@
         <None Remove="Resources\Schematics\Cosmetics\VestBlack2.json" />
         <None Remove="Resources\Schematics\Cosmetics\VestGreen1.json" />
         <None Remove="Resources\Schematics\Cosmetics\VestGreen2.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Site12 - Copy.csproj" />
     </ItemGroup>
 </Project>
