@@ -25,7 +25,7 @@ public class WeightSystem
         new(ItemType.KeycardMTFCaptain, 0),
         new(ItemType.KeycardMTFOperative, 0),
         new(ItemType.KeycardMTFPrivate, 0),
-        new(ItemType.KeycardChaosInsurgency, 0),
+        new(ItemType.KeycardChaosInsurgency, 1),
         new(ItemType.KeycardO5, 0),
         new(ItemType.Medkit, 2),
         new(ItemType.Painkillers, 1),
@@ -34,15 +34,15 @@ public class WeightSystem
         new(ItemType.Flashlight, 2),
         new(ItemType.Radio, 3),
         new(ItemType.GunCOM15, 1),
-        new(ItemType.GunCOM18, 1),
-        new(ItemType.GunRevolver, 4),
-        new(ItemType.GunFSP9, 4),
-        new(ItemType.GunShotgun, 8),
+        new(ItemType.GunCOM18, 2),
+        new(ItemType.GunRevolver, 3),
+        new(ItemType.GunFSP9, 6),
+        new(ItemType.GunShotgun, 12),
         new(ItemType.GunCrossvec, 7),
-        new(ItemType.GunE11SR, 8),
-        new(ItemType.GunAK, 9),
-        new(ItemType.GunLogicer, 17),
-        new(ItemType.GunFRMG0, 13),
+        new(ItemType.GunE11SR, 10),
+        new(ItemType.GunAK, 12),
+        new(ItemType.GunLogicer, 15),
+        new(ItemType.GunFRMG0, 15),
         new(ItemType.GunA7, 6),
         new(ItemType.GunCom45, 4),
         new(ItemType.MicroHID, 20),
@@ -51,7 +51,7 @@ public class WeightSystem
         new(ItemType.ArmorLight, 3),
         new(ItemType.ArmorCombat, 9),
         new(ItemType.ArmorHeavy, 13),
-        new(ItemType.SCP018, 4),
+        new(ItemType.SCP018, 2),
         new(ItemType.SCP500, 0),
         new(ItemType.SCP244a, 5),
         new(ItemType.SCP244b, 5),
@@ -65,36 +65,45 @@ public class WeightSystem
         new(ItemType.SCP268, 0),
         new(ItemType.SCP1507Tape, 1),
         new(ItemType.Jailbird, 6),
+        new (ItemType.SCP1509, 4)
     ];
     public void Init(ExPlayer victim) => Timing.RunCoroutine(GrabInventory(victim));
 
     public IEnumerator<float> GrabInventory(ExPlayer victim)
     {
         var hasDamaged = false;
-        while (victim != null)
-        {
-            var intensity = Mathf.Clamp(victim.Inventory.UserInventory.Items.Sum(item => ItemWeights.Where(weight => weight.ItemType == item.Value.ItemTypeId).Sum(weight => weight.Weight)), 0, 90);
-            intensity = Mathf.Clamp(intensity, 0, 90);
-            if (intensity == 90 && !hasDamaged && (victim.Velocity.x > 0 || victim.Velocity.y > 0 || victim.Velocity.z > 0))
+        if (!victim.IsGodModeEnabled)
+            while (victim.IsConnected && victim.IsAlive)
             {
-                var damage = 1f;
-                var deathReason = "Spine damaged from too much strain.";
-                if (victim.IsJumping)
+                var intensity =
+                    Mathf.Clamp(
+                        victim.Inventory.UserInventory.Items.Sum(item =>
+                            ItemWeights.Where(weight => weight.ItemType == item.Value.ItemTypeId)
+                                .Sum(weight => weight.Weight)), 0, 90);
+                intensity = Mathf.Clamp(intensity, 0, 90);
+                if (intensity == 90 && !hasDamaged &&
+                    (victim.Velocity.x > 0 || victim.Velocity.y > 0 || victim.Velocity.z > 0))
                 {
-                    damage = 5f;
-                    if (URandom.Range(0, 20) == 0)
+                    var damage = 1f;
+                    var deathReason = "Spine damaged from too much strain.";
+                    if (victim.IsJumping)
                     {
-                        damage = 100f;
-                        deathReason = "Intestines appear to be all over the floor...";
-                        victim.PlaceTantrum();
+                        damage = 5f;
+                        if (URandom.Range(0, 20) == 0)
+                        {
+                            damage = victim.Health;
+                            deathReason = "Intestines appear to be all over the floor...";
+                            victim.PlaceTantrum();
+                        }
                     }
+
+                    hasDamaged = true;
+                    victim.Hurt(damage, deathReason);
+                    Timing.CallDelayed(0.5f, () => hasDamaged = false);
                 }
-                hasDamaged = true;
-                victim.Hurt(damage, deathReason);
-                Timing.CallDelayed(0.5f, () => hasDamaged = false);
+
+                victim.EnableEffect<Slowness>((byte)intensity, 1f);
+                yield return Timing.WaitForOneFrame;
             }
-            victim.EnableEffect<Slowness>((byte)intensity, 1f);
-            yield return Timing.WaitForOneFrame;
-        }
     }
 }

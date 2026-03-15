@@ -28,14 +28,29 @@ public class WebServer
         foreach (var prefix in prefixes)
             _listener.Prefixes.Add(prefix);
 
-        if (!File.Exists(Path.Combine(Paths.Plugins, "Site12", "Users.json")))
+        Directory.CreateDirectory(Path.Combine(Paths.Configs, "Site12"));
+        if (Directory.Exists(Path.Combine(Paths.Plugins, "Site12")))
+        {
+            var oldfolder = Path.Combine(Paths.Plugins, "Site12");
+            if (File.Exists(Path.Combine(Paths.Configs, "Site12", "Users.json")))
+            {
+                Directory.CreateDirectory(Path.Combine(Paths.Configs, "Site12BackupOld"));
+                File.Move(Path.Combine(oldfolder, "Users.json"), Path.Combine(Paths.Configs, "Site12BackupOld", "Users.json"));
+            }
+            if(File.Exists(Path.Combine(oldfolder, "Users.json")))
+                File.Move(Path.Combine(oldfolder, "Users.json"), Path.Combine(Paths.Configs, "Site12", "Users.json"));
+            if (!Directory.EnumerateFiles(oldfolder).Any())
+                Directory.Delete(oldfolder);
+        }
+        
+        if (!File.Exists(Path.Combine(Paths.Configs, "Site12", "Users.json")))
         {
             users.SavedUsers = [new User ("ExampleUser", "ExamplePassword", "Other", true)];
-            File.WriteAllText(Path.Combine(Paths.Plugins, "Site12", "Users.json"), JsonConvert.SerializeObject(users, Formatting.Indented));
+            File.WriteAllText(Path.Combine(Paths.Configs, "Site12", "Users.json"), JsonConvert.SerializeObject(users, Formatting.Indented));
         }
     }
 
-    private static List<User> GetUsers() => JsonConvert.DeserializeObject<Users>(File.ReadAllText(Path.Combine(Paths.Plugins, "Site12", "Users.json"))).SavedUsers;
+    private static List<User> GetUsers() => JsonConvert.DeserializeObject<Users>(File.ReadAllText(Path.Combine(Paths.Configs, "Site12", "Users.json"))).SavedUsers;
 
     public void Start()
     {
@@ -186,7 +201,7 @@ public class WebServer
             return;
         }
 
-        var sessionId = request.Cookies["sessionId"].Value;
+        var sessionId = request.Cookies["sessionId"]?.Value;
         var user = _sessions[sessionId];
 
         var roles = Department.DepartmentsData[user.Department].Roles.Select(role => new

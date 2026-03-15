@@ -36,6 +36,9 @@ public class Config : IConfig
 
     [Description("Whether the WeightSystem should be enabled/disabled.")]
     public bool WeightSystem { get; set; } = false;
+    
+    [Description("Experiemntal features toggle.")]
+    public bool Experimental { get; set; } = false;
 
     [Description("Discord Webhook link for Department Logs")]
     public string URL { get; set; } = "Example URL";
