@@ -75,6 +75,7 @@ public class GRPPMenu
         // We're technically sending ALL settings here, but clients will immediately send back the response which will allow us to re-send only the portion they're interested in.
         // You can optimize this process by only sending the page selector, but I didn't want to complicate this example more than it needs to.
         ServerSpecificSettingsSync.SendToAll();
+        // ServerSpecificSettingsSync.SendToPlayer(); // yeah okay i'll touch this when i'm less dumb
     }
 
     private HashSet<ReferenceHub> _activated = [];

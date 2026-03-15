@@ -115,7 +115,7 @@ public class UseLobbyCommand : ICommand
         TeslaGate12.IsEnabled = false;
         SpawnWaves.IsEnabled = false;
 
-        Door.LockAll(999999, DoorLockType.AdminCommand);
+        Door.LockAll(999999, ZoneType.Entrance, DoorLockType.AdminCommand);
 
         foreach (var player in ExPlayer.List) Lobby.Action(player);
 
@@ -202,13 +202,15 @@ public class BeginRoleplay : ICommand
 {
     public string Command => "StartRoleplay";
     public string[] Aliases => ["BeginRoleplay", "RoleplayStart", "startrp", "rp1"];
-    public string Description => "Starts the Roleplay (THIS COMMAND IS REQUIRED)";
-    public string Usage => "rp1 [optional sitenumber] [restrictperms 1/yes 0/no]";
+    public string Description => $"Usage: {Usage}";
+    public string Usage => "`rp1 [restrictperms 1/yes 0/no] [optional sitenumber]`";
+    public bool Restrict { get; set; }
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {
         response = "<color=red>No Permission.</color>";
-        if (!sender.CheckPermission("scombat.lobby")) // should probably rename this permission to something, maybe GRPP.* ? or grpp for general roleplay plugin
+        if (!sender.CheckPermission(
+                "scombat.lobby")) // should probably rename this permission to something, maybe GRPP.* ? or grpp for general roleplay plugin
             return false;
 
         response = "<color=orange>There is an ongoing roleplay.</color>";
@@ -217,22 +219,23 @@ public class BeginRoleplay : ICommand
 
         // int startTime = 0600;
         // int secondsPerHour = 600;
-        
+
         // if (arguments.Count == 2 && (!int.TryParse(arguments.At(0), out startTime) || int.TryParse(arguments.At(1), out secondsPerHour) || startTime < 0 || secondsPerHour < 0))
         //     return false;
         //
         // if (arguments.Count == 2)
         // RoleplayTime.StartClock(startTime, secondsPerHour); // in roleplaytime.cs
-        if (arguments.Count > 0 && arguments.At(0) == "z")
-            response = "<color=red>ZZZZZZZZZZZZZZ</color>";
-        if (arguments.Count > 1)
-            Plugin.Singleton.Config.SiteName = arguments.At(1);
-        if (arguments.Count > 2 && arguments.At(2) == "1" || arguments.Count > 2 && arguments.At(2) == "yes")
+        // if (arguments.Count > 0 && arguments.At(0) == "z") 
+        //     Log.Error("Argument 0 provided.");
+        if (arguments.Count > 0 && arguments.At(0) == "1" || arguments.Count > 0 && arguments.At(0) == "yes")
         {
             response = !Plugin.Singleton.Config.RestrictiveMode 
                 ? "Restrictive mode enabled. Other users may have less permissions. ((UNIMPLEMENTED))" 
                 : "Sorry, but restrictive mode has been disabled via config. Server owners, check your configuration to ensure you use plain true/false in RestrictiveMode.";
+            Restrict = false;
         }
+        if (arguments.Count > 1)
+            Lobby.Site = arguments.At(0); 
 
         Lobby.HasRoleplayStarted = true;
         foreach (var player in ExPlayer.List)
@@ -242,7 +245,8 @@ public class BeginRoleplay : ICommand
             Timing.RunCoroutine(scom.TrackHours());
         }
         GiveInventories();
-        response = "<color=green>Ezpz</color>";
+        response = "<color=green>Roleplay has begun. All EZ doors have been unlocked.</color>";
+        Door.UnlockAll(ZoneType.Entrance);
         return true;
     }
 
