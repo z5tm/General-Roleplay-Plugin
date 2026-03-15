@@ -1,8 +1,9 @@
-﻿namespace Site12.API.Features.Items;
+﻿namespace GRPP.API.Features.Items;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using CommandSystem;
 using Core;
 using CustomItems;

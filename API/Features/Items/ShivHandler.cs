@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.Items;
+﻿namespace GRPP.API.Features.Items;
 
 using System;
 using Attributes;

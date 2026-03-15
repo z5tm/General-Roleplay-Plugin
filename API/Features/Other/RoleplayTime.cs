@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.Other;
+﻿namespace GRPP.API.Features.Other;
 
 using System.Collections.Generic;
 using Exiled.API.Features;

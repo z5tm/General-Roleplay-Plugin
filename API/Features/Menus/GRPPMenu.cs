@@ -1,19 +1,21 @@
-namespace Site12.API.Features.Menus;
+namespace GRPP.API.Features.Menus;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Department;
 using Exiled.API.Features;
 using Extensions;
 using MEC;
 using PlayerRoles;
 using UserSettings.ServerSpecific;
+using Vector3 = UnityEngine.Vector3;
 
 /// <summary>
 /// This example shows an ability to organize longer lists of entries by introducing a page selector.
 /// <para /> This example uses auto-generated IDs, since it doesn't provide additional functionality, and reliability of saving isn't important here.
 /// </summary>
-public class Site12Menu
+public class GRPPMenu
 {
     private static Dictionary<int, Role> RolesToId = [];
 
@@ -179,7 +181,8 @@ public class Site12Menu
                     if (!player.SetRole(role.RoleName, role.Department, RoleSpawnFlags.AssignInventory))
                         break;
 
-                    Timing.CallDelayed(0.25f, () => player.Position = Plugin.Singleton.Config.PlayerSpawnLocation);
+                    if(Plugin.Singleton.Config.PlayerSpawnLocationX == 0f &&  Plugin.Singleton.Config.PlayerSpawnLocationY == 0f &&  Plugin.Singleton.Config.PlayerSpawnLocationZ == 0f)
+                        Timing.CallDelayed(0.25f, () => player.Position = new(Plugin.Singleton.Config.PlayerSpawnLocationX,  Plugin.Singleton.Config.PlayerSpawnLocationY, Plugin.Singleton.Config.PlayerSpawnLocationZ));
                 }
 
                 player.ShowHint("<size=16>" + setRole.Role.Description, 10f);

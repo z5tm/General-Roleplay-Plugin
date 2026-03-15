@@ -1,4 +1,4 @@
-namespace Site12.API.Features;
+namespace GRPP.API.Features;
 
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ public class Audio : ICommand
     {
         var player = ExPlayer.Get(sender);
         response = "<color=red>No Permission.";
-        if (!sender.CheckPermission("site12.au"))
+        if (!sender.CheckPermission("GRPP.au"))
             return false;
 
         response = "<color=red>Invalid Usage\n" +

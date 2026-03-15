@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Attributes;
+﻿namespace GRPP.API.Attributes;
 
 using System;
 

@@ -1,4 +1,4 @@
-namespace Site12.API.Features.Department;
+namespace GRPP.API.Features.Department;
 
 using System;
 using System.Collections.Generic;
@@ -28,42 +28,42 @@ public class WebServer
         foreach (var prefix in prefixes)
             _listener.Prefixes.Add(prefix);
 
-        Directory.CreateDirectory(Path.Combine(Paths.Configs, "Site12Internal"));
+        Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPPInternal"));
         if (Directory.Exists(Path.Combine(Paths.Plugins, "Site12")))
         {
             Log.Info("Detected old folder! Handling..");
             var oldfolder = Path.Combine(Paths.Plugins, "Site12");
-            if (File.Exists(Path.Combine(Paths.Configs, "Site12Internal", "Users.json")))
+            if (File.Exists(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json")) && File.Exists(Path.Combine(oldfolder, "Users.json")))
             {
-                Directory.CreateDirectory(Path.Combine(Paths.Configs, "Site12BackupOld"));
-                File.Move(Path.Combine(oldfolder, "Users.json"), Path.Combine(Paths.Configs, "Site12BackupOld", "Users.json"));
-                Log.Debug("Both Users.json in an old and new folder exist. Moving Users.json from 'EXILED/Plugins/Site12/' over to 'EXILED/Configs/Site12BackupOld/'.");
+                Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPPBackupOld"));
+                File.Move(Path.Combine(oldfolder, "Users.json"), Path.Combine(Paths.Configs, "GRPPBackupOld", "Users.json"));
+                Log.Debug("Both Users.json in an old and new folder exist. Moving Users.json from 'EXILED/Plugins/Site12/' over to 'EXILED/Configs/GRPPBackupOld/'.");
             }
 
             if (File.Exists(Path.Combine(oldfolder, "Users.json")))
             {
                 File.Move(Path.Combine(oldfolder, "Users.json"),
-                    Path.Combine(Paths.Configs, "Site12Internal", "Users.json"));
+                    Path.Combine(Paths.Configs, "GRPPInternal", "Users.json"));
                 Log.Debug("Moved old Users.json to new Users.json path.");
             }
 
             if (!Directory.EnumerateFiles(oldfolder).Any())
             {
                 Directory.Delete(oldfolder);
-                Log.Debug("Successfully deleted 'EXILED/Plugins/Site12/'! New path is 'EXILED/Configs/Site12Internal/'");
+                Log.Debug("Successfully deleted 'EXILED/Plugins/Site12/'! New path is 'EXILED/Configs/GRPPInternal/'");
             }
             else
-                Log.Warn("Warning: You still have an old folder named 'Site12' in 'EXILED/Plugins/'. The new config folder for the webserver is stored in 'EXILED/Configs/Site12Internal'.");
+                Log.Warn("Warning: You still have an old folder named 'GRPP' in 'EXILED/Plugins/'. The new config folder for the webserver is stored in 'EXILED/Configs/GRPPInternal'.");
         }
-        if (!File.Exists(Path.Combine(Paths.Configs, "Site12Internal", "Users.json")))
+        if (!File.Exists(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json")))
         {
             users.SavedUsers = [new User ("ExampleUser", "ExamplePassword", "Other", true)];
-            File.WriteAllText(Path.Combine(Paths.Configs, "Site12Internal", "Users.json"), JsonConvert.SerializeObject(users, Formatting.Indented));
-            Log.Debug("Created new EXILED/Configs/Site12Internal/Users.json");
+            File.WriteAllText(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json"), JsonConvert.SerializeObject(users, Formatting.Indented));
+            Log.Debug("Created new EXILED/Configs/GRPPInternal/Users.json");
         }
     }
 
-    private static List<User> GetUsers() => JsonConvert.DeserializeObject<Users>(File.ReadAllText(Path.Combine(Paths.Configs, "Site12Internal", "Users.json"))).SavedUsers;
+    private static List<User> GetUsers() => JsonConvert.DeserializeObject<Users>(File.ReadAllText(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json"))).SavedUsers;
 
     public void Start()
     {

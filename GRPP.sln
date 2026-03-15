@@ -2,7 +2,7 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Site12", "Site12.csproj", "{A72AFBCB-7858-433A-BF85-8CC73C572612}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRPP", "GRPP.csproj", "{A72AFBCB-7858-433A-BF85-8CC73C572612}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

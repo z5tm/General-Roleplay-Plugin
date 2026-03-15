@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.Department;
+﻿namespace GRPP.API.Features.Department;
 
 using System;
 using System.Collections.Generic;
@@ -414,7 +414,7 @@ public class Leaderboard : ICommand
 {
     public string Command => "Leaderboard";
     public string[] Aliases => ["baltop"];
-    public string Description => "Gets a leaderboard of the richest Site-12 personnel.";
+    public string Description => "Gets a leaderboard of the richest site personnel.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {

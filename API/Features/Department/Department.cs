@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.Department;
+﻿namespace GRPP.API.Features.Department;
 
 using System.Collections.Generic;
 using System.IO;
@@ -16,15 +16,15 @@ public class Department
     [OnPluginEnabled]
     public static void Init()
     {
-        if (!Directory.Exists(Path.Combine(Paths.Plugins, "Site12")))
-            Directory.CreateDirectory(Path.Combine(Paths.Plugins, "Site12"));
-        foreach (var files in Directory.GetFiles(Path.Combine(Paths.Plugins, "Site12")))
+        if (!Directory.Exists(Path.Combine(Paths.Plugins, "GRPP")))
+            Directory.CreateDirectory(Path.Combine(Paths.Plugins, "GRPP"));
+        foreach (var files in Directory.GetFiles(Path.Combine(Paths.Plugins, "GRPP")))
         {
-            if (files == Path.Combine(Paths.Plugins, "Site12", "PlayerData.json"))
+            if (files == Path.Combine(Paths.Plugins, "GRPP", "PlayerData.json"))
                 continue;
-            if (files == Path.Combine(Paths.Plugins, "Site12", "Shop.json"))
+            if (files == Path.Combine(Paths.Plugins, "GRPP", "Shop.json"))
                 continue;
-            if (files == Path.Combine(Paths.Plugins, "Site12", "Users.json"))
+            if (files == Path.Combine(Paths.Plugins, "GRPP", "Users.json"))
                 continue;
             var data = JsonConvert.DeserializeObject<DepartmentInfo>(File.ReadAllText(files));
             DepartmentsData.Add(data.Department, data);
@@ -48,7 +48,7 @@ public class Department
 
     public static void UpdateDepartment(string name, DepartmentInfo departmentInfo)
     {
-        if (!File.Exists(Path.Combine(Paths.Plugins, "Site12", name + ".json")))
+        if (!File.Exists(Path.Combine(Paths.Plugins, "GRPP", name + ".json")))
             return;
 
         if (departmentInfo == null)
@@ -57,12 +57,12 @@ public class Department
         if(DepartmentsData.ContainsKey(name))
             DepartmentsData[name] = departmentInfo;
 
-        File.WriteAllText(Path.Combine(Paths.Plugins, "Site12", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
+        File.WriteAllText(Path.Combine(Paths.Plugins, "GRPP", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
     }
 
     public static DepartmentInfo CreateNewDepartment(string name, List<RoleEntry> roleEntries)
     {
-        if (File.Exists(Path.Combine(Paths.Plugins, "Site12", name + ".json")))
+        if (File.Exists(Path.Combine(Paths.Plugins, "GRPP", name + ".json")))
             return null;
 
         var departmentInfo = new DepartmentInfo
@@ -74,7 +74,7 @@ public class Department
 
         DepartmentsData.Add(name, departmentInfo);
 
-        File.WriteAllText(Path.Combine(Paths.Plugins, "Site12", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
+        File.WriteAllText(Path.Combine(Paths.Plugins, "GRPP", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
 
         return departmentInfo;
     }
@@ -82,7 +82,7 @@ public class Department
     public static void UpdateDepartmentData(string departmentName)
     {
         if(DepartmentsData.TryGetValue(departmentName, out var value))
-            File.WriteAllText(Path.Combine(Paths.Plugins, "Site12", departmentName + ".json"), JsonConvert.SerializeObject(value, Formatting.Indented));
+            File.WriteAllText(Path.Combine(Paths.Plugins, "GRPP", departmentName + ".json"), JsonConvert.SerializeObject(value, Formatting.Indented));
     }
 }
 
