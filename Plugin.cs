@@ -50,7 +50,7 @@ public sealed class Plugin : Plugin<Config>
         _wasEverEnabled = true;
 
         new WebServer([$"http://*:{Server.Port}/"]).Start(); // Runs on your automatically port forwarded IP
-
+        Log.Info($"WebServer port is {Server.IpAddress}:{Server.Port}");
         ProjectMER.Events.Handlers.Schematic.SchematicSpawned += SpawningSchematic;
 
         new Site12Menu().Activate();
