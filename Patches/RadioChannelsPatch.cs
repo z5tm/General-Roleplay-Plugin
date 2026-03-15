@@ -1,4 +1,4 @@
-﻿namespace Site12.Patches;
+﻿ namespace GRPP.Patches;
 
 using API.Attributes;
 using Exiled.Events.EventArgs.Player;
@@ -17,6 +17,7 @@ using static HarmonyLib.AccessTools;
 // /// <summary>
 // /// Allows the usage of radio channels for radios when using the on/off toggle key.
 // /// </summary>
+ //// I am not ready for harmony patches -Z5 
 // [HarmonyPatch]
 // public static class RadioChannelsPatch
 // {

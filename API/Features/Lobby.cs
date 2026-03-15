@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features;
+﻿namespace GRPP.API.Features;
 
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ public abstract class Lobby
     public static bool HasRoleplayStarted;
     public static SchematicObject Schematic;
 
-    public static string Site = "22";
+    public static string Site = Plugin.Singleton.Config?.SiteName;
 
     [OnPluginEnabled]
     public static void InitEvents()
@@ -71,7 +71,7 @@ public abstract class Lobby
         if (!IsLobby) return;
 
         player.Role.Set(RoleTypeId.Tutorial, SpawnReason.None, RoleSpawnFlags.All);
-        Timing.CallDelayed(Timing.WaitForOneFrame, () => player.Position = Plugin.Singleton.Config.LobbySpawnLocation);
+        Timing.CallDelayed(Timing.WaitForOneFrame, () => player.Position = new Vector3(Plugin.Singleton.Config.LobbySpawnLocationX, Plugin.Singleton.Config.LobbySpawnLocationY, Plugin.Singleton.Config.LobbySpawnLocationZ));
         Timing.CallDelayed(0.2f, () => player.ShowHint("<b>Welcome to the lobby!</b>\n<b>Pick a role in the Server-Specific tab in your Settings!</b>",10f));
     }
 }
@@ -203,26 +203,36 @@ public class BeginRoleplay : ICommand
     public string Command => "StartRoleplay";
     public string[] Aliases => ["BeginRoleplay", "RoleplayStart", "startrp", "rp1"];
     public string Description => "Starts the Roleplay (THIS COMMAND IS REQUIRED)";
+    public string Usage => "rp1 [optional sitenumber] [restrictperms 1/yes 0/no]";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {
-        response = "<color=red>No Permission.";
-        if (!sender.CheckPermission("scombat.lobby"))
+        response = "<color=red>No Permission.</color>";
+        if (!sender.CheckPermission("scombat.lobby")) // should probably rename this permission to something, maybe GRPP.* ? or grpp for general roleplay plugin
             return false;
 
-        response = "<color=red>You already started the roleplay...";
+        response = "<color=orange>There is an ongoing roleplay.</color>";
         if (Lobby.HasRoleplayStarted)
             return false;
 
-        int startTime = 0600;
-        int secondsPerHour = 600;
-
-        response = "<color=red>Invalid start time or seconds per hour.";
-        if (arguments.Count == 2 && (!int.TryParse(arguments.At(0), out startTime) || int.TryParse(arguments.At(1), out secondsPerHour) || startTime < 0 || secondsPerHour < 0))
-            return false;
-
-        if (arguments.Count == 2)
-            RoleplayTime.StartClock(startTime, secondsPerHour);
+        // int startTime = 0600;
+        // int secondsPerHour = 600;
+        
+        // if (arguments.Count == 2 && (!int.TryParse(arguments.At(0), out startTime) || int.TryParse(arguments.At(1), out secondsPerHour) || startTime < 0 || secondsPerHour < 0))
+        //     return false;
+        //
+        // if (arguments.Count == 2)
+        // RoleplayTime.StartClock(startTime, secondsPerHour); // in roleplaytime.cs
+        if (arguments.Count > 0 && arguments.At(0) == "z")
+            response = "<color=red>ZZZZZZZZZZZZZZ</color>";
+        if (arguments.Count > 1)
+            Plugin.Singleton.Config.SiteName = arguments.At(1);
+        if (arguments.Count > 2 && arguments.At(2) == "1" || arguments.Count > 2 && arguments.At(2) == "yes")
+        {
+            response = !Plugin.Singleton.Config.RestrictiveMode 
+                ? "Restrictive mode enabled. Other users may have less permissions. ((UNIMPLEMENTED))" 
+                : "Sorry, but restrictive mode has been disabled via config. Server owners, check your configuration to ensure you use plain true/false in RestrictiveMode.";
+        }
 
         Lobby.HasRoleplayStarted = true;
         foreach (var player in ExPlayer.List)
@@ -232,7 +242,7 @@ public class BeginRoleplay : ICommand
             Timing.RunCoroutine(scom.TrackHours());
         }
         GiveInventories();
-        response = "<color=green>Ezpz";
+        response = "<color=green>Ezpz</color>";
         return true;
     }
 

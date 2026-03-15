@@ -1,4 +1,4 @@
-﻿namespace Site12.Extensions;
+﻿namespace GRPP.Extensions;
 
 using CommandSystem;
 using RemoteAdmin;

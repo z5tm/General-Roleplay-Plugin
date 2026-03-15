@@ -1,4 +1,4 @@
-namespace Site12.API.Features;
+namespace GRPP.API.Features;
 
 using System.Collections.Generic;
 using System.IO;

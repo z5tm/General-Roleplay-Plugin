@@ -1,4 +1,4 @@
-﻿namespace Site12.API;
+﻿namespace GRPP.API;
 
 using System.Collections.Generic;
 using System.Linq;

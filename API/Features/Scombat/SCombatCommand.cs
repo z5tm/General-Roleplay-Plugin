@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.Scombat;
+﻿namespace GRPP.API.Features.Scombat;
 
 using System;
 using System.Linq;

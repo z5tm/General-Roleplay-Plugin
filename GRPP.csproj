@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <AssemblyTitle>Site12</AssemblyTitle>
-        <Product>Site12</Product>
+        <AssemblyTitle>GRPP</AssemblyTitle>
+        <Product>GRPP</Product>
         <TargetFramework>net481</TargetFramework>
         <LangVersion>12.0</LangVersion>
         <MapFileExtensions>true</MapFileExtensions>

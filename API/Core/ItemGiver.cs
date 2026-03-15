@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Core;
+﻿namespace GRPP.API.Core;
 
 using System;
 using Features.CustomItems;

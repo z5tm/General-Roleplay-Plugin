@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.Scombat.SCombatCmds;
+﻿namespace GRPP.API.Features.Scombat.SCombatCmds;
 
 using System;
 using CommandSystem;

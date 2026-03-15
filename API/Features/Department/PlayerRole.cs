@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Site12.API.Features.Department;
+namespace GRPP.API.Features.Department;
 
 using Exiled.API.Features;
 using NorthwoodLib.Pools;

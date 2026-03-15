@@ -1,4 +1,4 @@
-﻿namespace Site12;
+﻿namespace GRPP;
 
 using System;
 using System.Linq;
@@ -21,13 +21,13 @@ public sealed class Plugin : Plugin<Config>
 {
     static Plugin()
     {
-        Harmony = new Harmony("com.site12.main");
+        Harmony = new Harmony("com.grpp.main");
         Harmony.PatchAll();
     }
 
-    public override string Name => "Site12";
-    public override string Author => "Site-12 Development Team";
-    public override Version Version => new(3, 0, 4); // Pre-Release 4 (Final version you can receive)
+    public override string Name => "GRPP"; // General Roleplay Plugin
+    public override string Author => "Site-27 & 12 Development Team"; // Thank you Stick and VisLuke
+    public override Version Version => new(1, 0, 0); // Reset to v1 due to name change
 
     public static Plugin Singleton;
     public static Harmony Harmony;
@@ -39,7 +39,7 @@ public sealed class Plugin : Plugin<Config>
 
         if (!Config.ConfigurationComplete)
         {
-            Log.Error("Site-12 was not configured properly...");
+            Log.Error("GRPP was not configured properly...");
             return;
         }
 
@@ -53,7 +53,7 @@ public sealed class Plugin : Plugin<Config>
         Log.Info($"WebServer port is {Server.IpAddress}:{Server.Port}");
         ProjectMER.Events.Handlers.Schematic.SchematicSpawned += SpawningSchematic;
 
-        new Site12Menu().Activate();
+        new GRPPMenu().Activate();
 
         ListResourceNames();
         InvokeOnEnabledAttributes();

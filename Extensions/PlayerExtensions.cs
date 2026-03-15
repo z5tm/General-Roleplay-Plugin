@@ -1,4 +1,4 @@
-﻿namespace Site12.Extensions;
+﻿namespace GRPP.Extensions;
 
 using API.Features;
 using API.Features.Other;
