@@ -1,4 +1,17 @@
-﻿namespace GRPP;
+﻿// General Roleplay Plugin
+// Copyright (C) 2025 Site-12, VisLuke, SticksDeveloper
+// Copyright (C) 2026 Site-27, z5tm
+//
+// This file is part of General Roleplay Plugin.
+//
+// General Roleplay Plugin is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//
+// General Roleplay Plugin is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>.
+//
+
+namespace GRPP;
 
 using System;
 using System.Linq;
@@ -13,6 +26,7 @@ using ProjectMER.Events.Arguments;
 using UnityEngine;
 using Log = Exiled.API.Features.Log;
 using Server = Exiled.API.Features.Server;
+using System.Reflection.Emit;
 
 /// <summary>
 /// The main plugin class for this assembly.
@@ -23,6 +37,21 @@ public sealed class Plugin : Plugin<Config>
     {
         Harmony = new Harmony("com.grpp.main");
         Harmony.PatchAll();
+        /*AppDomain.CurrentDomain.AssemblyResolve += (sender, args) => // subscribe to AssemblyResolve get notified when shit fails, args contains name that tried to load but failed - sender due to convention - we also use a lambda operator, which is cool - basically tells the code that this is the function to call after this event fires, and here - take these two args :sunglasses:
+        {
+            if (args.Name.StartsWith("System.ComponentModel.DataAnnotations")) // if the args provided by assemblyresolve's broken shi ~= dataannotations, continue - we use startswith because the actual output has too much shit going on 
+            {
+                var name = new AssemblyName("System.ComponentModel.DataAnnotations") // easier on the eyes. we could totally just put it right into the definedynamicassembly
+                {
+                    Version = new Version(4, 0, 0, 0) // set that version to 4.0.0.0
+                };
+                return AppDomain.CurrentDomain.DefineDynamicAssembly( // Create a empty assembly, in memory (hence AssemblyBuilderAccess.Run), with said identity, faking having the DLL :sunglasses:
+                    name,
+                    System.Reflection.Emit.AssemblyBuilderAccess.Run // this allows us to create assemblies at runtime, in memory, to disk, etc! RunAndSave = run + save to disk, Save = make, write to file
+                );
+            }
+            return null; // If we can't handle it, we say so - null basically tells AssemblyResolve that we do not know how to handle this error and to move on. This also applies to non-DataAnnotations breaks.
+        };*/// I did NOT just spend like 5 hours on this just for it to be an upstream issue. FUCKKKKKKKK
     }
 
     public override string Name => "GRPP"; // General Roleplay Plugin
