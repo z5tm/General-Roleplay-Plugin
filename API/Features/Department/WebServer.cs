@@ -28,22 +28,22 @@ public class WebServer
         foreach (var prefix in prefixes)
             _listener.Prefixes.Add(prefix);
 
-        Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPPInternal"));
+        Directory.CreateDirectory(Path.Combine(Paths.Config, "GRPPInternal"));
         if (Directory.Exists(Path.Combine(Paths.Plugins, "Site12")))
         {
             Log.Info("Detected old folder! Handling..");
             var oldfolder = Path.Combine(Paths.Plugins, "Site12");
-            if (File.Exists(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json")) && File.Exists(Path.Combine(oldfolder, "Users.json")))
+            if (File.Exists(Path.Combine(Paths.Config, "GRPPInternal", "Users.json")) && File.Exists(Path.Combine(oldfolder, "Users.json")))
             {
-                Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPPBackupOld"));
-                File.Move(Path.Combine(oldfolder, "Users.json"), Path.Combine(Paths.Configs, "GRPPBackupOld", "Users.json"));
+                Directory.CreateDirectory(Path.Combine(Paths.Config, "GRPPBackupOld"));
+                File.Move(Path.Combine(oldfolder, "Users.json"), Path.Combine(Paths.Config, "GRPPBackupOld", "Users.json"));
                 Log.Debug("Both Users.json in an old and new folder exist. Moving Users.json from 'EXILED/Plugins/Site12/' over to 'EXILED/Configs/GRPPBackupOld/'.");
             }
 
             if (File.Exists(Path.Combine(oldfolder, "Users.json")))
             {
                 File.Move(Path.Combine(oldfolder, "Users.json"),
-                    Path.Combine(Paths.Configs, "GRPPInternal", "Users.json"));
+                    Path.Combine(Paths.Config, "GRPPInternal", "Users.json"));
                 Log.Debug("Moved old Users.json to new Users.json path.");
             }
 
@@ -55,28 +55,28 @@ public class WebServer
             else
                 Log.Warn("Warning: You still have an old folder named 'GRPP' in 'EXILED/Plugins/'. The new config folder for the webserver is stored in 'EXILED/Configs/GRPPInternal'.");
         }
-        if (!File.Exists(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json")))
+        if (!File.Exists(Path.Combine(Paths.Config, "GRPPInternal", "Users.json")))
         {
             users.SavedUsers = [new User ("ExampleUser", "ExamplePassword", "Other", true)];
-            File.WriteAllText(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json"), JsonConvert.SerializeObject(users, Formatting.Indented));
+            File.WriteAllText(Path.Combine(Paths.Config, "GRPPInternal", "Users.json"), JsonConvert.SerializeObject(users, Formatting.Indented));
             Log.Debug("Created new EXILED/Configs/GRPPInternal/Users.json");
         }
     }
 
-    private static List<User> GetUsers() => JsonConvert.DeserializeObject<Users>(File.ReadAllText(Path.Combine(Paths.Configs, "GRPPInternal", "Users.json"))).SavedUsers;
+    private static List<User> GetUsers() => JsonConvert.DeserializeObject<Users>(File.ReadAllText(Path.Combine(Paths.Config, "GRPPInternal", "Users.json"))).SavedUsers;
 
     public void Start()
     {
         _listener.Start();
         _listener.BeginGetContext(OnRequest, null);
-        Log.Info($"""Started the WebServer Listening for Requests... :)""");
+        Log.Info($"""Webserver started.""");
     }
 
     // Only on errors.
     public void Stop()
     {
         _listener.Stop();
-        Log.Warn("Shutting Down :(");
+        Log.Info("Webserver shutting down.");
     }
 
     private void OnRequest(IAsyncResult result)

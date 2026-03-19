@@ -2,11 +2,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using Exiled.API.Enums;
-using Exiled.API.Features;
 using Exiled.API.Interfaces;
-using MapGeneration;
-using UnityEngine;
 
 public class Config : IConfig
 {

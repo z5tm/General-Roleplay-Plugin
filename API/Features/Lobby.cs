@@ -34,7 +34,7 @@ public abstract class Lobby
     public static bool HasRoleplayStarted;
     public static SchematicObject Schematic;
 
-    public static string Site = Plugin.Singleton.Config?.SiteName;
+    public static string Site = Plugin.Singleton?.Config?.SiteName;
 
     [OnPluginEnabled]
     public static void InitEvents()
@@ -51,7 +51,7 @@ public abstract class Lobby
 
         if(Scp2536Controller.Singleton)
             UObject.Destroy(Scp2536Controller.Singleton);
-        Scp559Cake.PossibleSpawnpoints.Clear();
+        Scp559Cake.PossibleSpawnpoints?.Clear();
         IsRoleplay = false;
         IsLobby = false;
         HasRoleplayStarted = false;
@@ -70,9 +70,10 @@ public abstract class Lobby
     {
         if (!IsLobby) return;
 
-        player.Role.Set(RoleTypeId.Tutorial, SpawnReason.None, RoleSpawnFlags.All);
-        Timing.CallDelayed(Timing.WaitForOneFrame, () => player.Position = new Vector3(Plugin.Singleton.Config.LobbySpawnLocationX, Plugin.Singleton.Config.LobbySpawnLocationY, Plugin.Singleton.Config.LobbySpawnLocationZ));
-        Timing.CallDelayed(0.2f, () => player.ShowHint("<b>Welcome to the lobby!</b>\n<b>Pick a role in the Server-Specific tab in your Settings!</b>",10f));
+        player?.Role.Set(RoleTypeId.Tutorial, SpawnReason.None, RoleSpawnFlags.All);
+        if(Plugin.Singleton.Config.ConfigurationComplete)
+            Timing.CallDelayed(Timing.WaitForOneFrame, () => player?.Position = new Vector3(Plugin.Singleton.Config.LobbySpawnLocationX, Plugin.Singleton.Config.LobbySpawnLocationY, Plugin.Singleton.Config.LobbySpawnLocationZ));
+        Timing.CallDelayed(0.2f, () => player?.ShowHint("<b>Welcome to the lobby!</b>\n<b>Pick a role in the Server-Specific tab in your Settings!</b>",10f));
     }
 }
 
@@ -88,11 +89,12 @@ public class UseLobbyCommand : ICommand
         if(Lobby.Site.IsEmpty())
             Lobby.Site = new Random().Next(10, 99).ToString();
         var exUser = ExPlayer.Get(sender);
-        response = "<color=red>No Permission.";
+        response = "<color=red>No Permission.</color>";
         if (!sender.CheckPermission("scombat.lobby"))
             return false;
 
-        response = "<color=red>You already used lobby";
+        response = "<color=orange>Lobby has already been used. `relob` or `reuselobby` are the appropriate commands for this scenario.</color>";
+        // OHHH i see what it's doing now! it overrides the `response` var each time, then if an if check fails there it just sends the latest response. smart.
         if (Lobby.IsRoleplay)
             return false;
 

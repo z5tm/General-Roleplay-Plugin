@@ -3,23 +3,24 @@
         <AssemblyTitle>GRPP</AssemblyTitle>
         <Product>GRPP</Product>
         <TargetFramework>net481</TargetFramework>
-        <LangVersion>12.0</LangVersion>
+        <LangVersion>14.0</LangVersion>
         <OutDir>bin\$(Configuration)_$(Platform)\</OutDir>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks> <!-- this should be false right? -->
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>none</DebugType>
         <Optimize>true</Optimize>
         <Platforms>x64</Platforms>
     </PropertyGroup>
-
     <ItemGroup>
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44.1" PrivateAssets="all" />
         <PackageReference Include="ExMod.Exiled" Version="9.13.1" />
-        <PackageReference Include="Mono.HttpUtility" Version="1.0.0.1" Private="True"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" Private="True"/>
-        <PackageReference Include="BigHelp.Http" Version="0.3.2" Private="True"/>
-        <PackageReference Include="Lib.Harmony" Version="2.4.2" Private="True"/>
-        <PackageReference Include="ByteSize" Version="2.1.2" Private="True"/>
+        <PackageReference Include="Mono.HttpUtility" Version="1.0.0.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="BigHelp.Http" Version="0.3.2"/>
+        <PackageReference Include="Lib.Harmony" Version="2.4.2"/>
+        <PackageReference Include="ByteSize" Version="2.1.2"/>
+        <PackageReference Include="NVorbis" Version="0.10.5"/>
 
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net481" Version="1.0.3">
             <PrivateAssets>all</PrivateAssets>
@@ -45,6 +46,7 @@
         <Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" Private="False" />
         <Reference Include="UnityEngine.AnimationModule" HintPath="$(SL_REFERENCES)\UnityEngine.AnimationModule.dll" Private="False" />
         <Reference Include="UnityEngine.TerrainModule" HintPath="$(SL_REFERENCES)\UnityEngine.TerrainModule.dll" Private="False" />
+        <!--<Reference Include="System.ComponentModel.DataAnnotations" Private="True"/>-->
     </ItemGroup>
     <ItemGroup>
         <_DepsDlls Include="$(MSBuildProjectDirectory)\deps\*.dll" />
@@ -53,57 +55,40 @@
     <ItemGroup>
         <Reference Include="@(_DepsDlls->'%(Filename)')">
             <HintPath>%(Identity)</HintPath>
-            <Private>False</Private>
+            <Private>true</Private>
         </Reference>
     </ItemGroup>
     <ItemGroup>
         <EditorConfigFiles Remove=".editorconfig" />
     </ItemGroup>
 
-    <ItemGroup>
-        <None Remove="Resources\Schematics\Cosmetics\ArmBand.json" />
-        <None Remove="Resources\Schematics\Cosmetics\Aviators.json" />
-        <None Remove="Resources\Schematics\Cosmetics\Beret.json" />
-        <None Remove="Resources\Schematics\Cosmetics\BeretV2.json" />
-        <None Remove="Resources\Schematics\Cosmetics\ChefHat.json" />
-        <None Remove="Resources\Schematics\Cosmetics\Cigarette.json" />
-        <None Remove="Resources\Schematics\Cosmetics\GoldChain.json" />
-        <None Remove="Resources\Schematics\Cosmetics\HardHatGray.json" />
-        <None Remove="Resources\Schematics\Cosmetics\HardHatGreen.json" />
-        <None Remove="Resources\Schematics\Cosmetics\HardHatPink.json" />
-        <None Remove="Resources\Schematics\Cosmetics\MedicalMask.json" />
-        <None Remove="Resources\Schematics\Cosmetics\SecGlasses.json" />
-        <None Remove="Resources\Schematics\Cosmetics\SecHelmet.json" />
-        <None Remove="Resources\Schematics\Cosmetics\SecHelmetRiot.json" />
-        <None Remove="Resources\Schematics\Cosmetics\SurgicalCap.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\PlayingCards.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\PropCoffeeMug.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\PropMedicalStrecher.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\propsflare.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\propsfoodtray.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\propsprc.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\propsprc-Rigidbodies.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\propsstepladder.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\PropWaterSpill.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\Radio.json" />
-        <None Remove="Resources\Schematics\Other\PG7VL.json" />
-        <None Remove="Resources\Schematics\Chaos\Cosmetics\RadioPack.json" />
-        <None Remove="Resources\Schematics\Chaos\Cosmetics\TechBelt.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\Briefcase.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\Briefcase-Pickups.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\Briefcase-Rigidbodies.json" />
-        <None Remove="Resources\Schematics\Lobby\RolePickingBridge.json" />
-        <None Remove="Resources\Schematics\Lobby\RolePickingBridge-Rigidbodies.json" />
-        <None Remove="Resources\Schematics\Lobby\Role_Turtle.json" />
-        <None Remove="Resources\Schematics\Lobby\RolePickingBridgeH.json" />
-        <None Remove="Resources\Schematics\Lobby\RolePickingBridgeH-Rigidbodies.json" />
-        <None Remove="Resources\Schematics\Patreon\Props\HalfBriefcase" />
-        <None Remove="Resources\Schematics\Cosmetics\HardHatBlue.json" />
-        <None Remove="Resources\Schematics\Cosmetics\HardHatWhite.json" />
-        <None Remove="Resources\Schematics\Cosmetics\HardHatYellow.json" />
-        <None Remove="Resources\Schematics\Cosmetics\VestBlack1.json" />
-        <None Remove="Resources\Schematics\Cosmetics\VestBlack2.json" />
-        <None Remove="Resources\Schematics\Cosmetics\VestGreen1.json" />
-        <None Remove="Resources\Schematics\Cosmetics\VestGreen2.json" />
-    </ItemGroup>
+    <Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+        <ItemGroup>
+            <InputAssemblies Include="$(TargetDir)$(AssemblyName).dll"/> <!---->
+            
+            <InputAssemblies Include="$(TargetDir)ByteSize.dll"/>
+            <!--<InputAssemblies Include="$(TargetDir)System.ComponentModel.DataAnnotations.dll"/>-->
+            <InputAssemblies Include="$(TargetDir)Newtonsoft.Json.dll"/>
+<!--            <InputAssemblies Include="$(TargetDir)Mono.HttpUtility.dll"/>-->
+            <InputAssemblies Include="$(TargetDir)NVorbis.dll"/>
+            <InputAssemblies Include="$(TargetDir)System.ValueTuple.dll"/>
+            <InputAssemblies Include="$(TargetDir)0Harmony.dll"/>
+            <InputAssemblies Include="deps/AudioPlayerApi.dll"/>
+            <!--<InputAssemblies Include="$(TargetDir).dll"/>-->
+            <LibraryPath Include="$(NuGetPackageRoot)exmod.exiled/9.13.1/lib/net48/"/>
+            <LibraryPath Include="$(NuGetPackageRoot)northwood.labapi/1.1.5/lib/net48/"/>
+            <LibraryPath Include="$(SL_REFERENCES)"/>
+        </ItemGroup>
+        <ILRepack
+            Parallel="true"
+            Internalize="true"
+            InputAssemblies="@(InputAssemblies)"
+            TargetKind="Dll"
+            OutputFile="$(TargetDir)$(AssemblyName).dll"
+            LibraryPath="@(LibraryPath)"
+        />
+    </Target>
+<!--    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">-->
+<!--        <Variable1>DebugValue</Variable1>-->
+<!--    </PropertyGroup>-->
 </Project>
