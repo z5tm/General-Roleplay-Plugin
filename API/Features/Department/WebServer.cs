@@ -67,9 +67,10 @@ public class WebServer
 
     public void Start()
     {
-        _listener.Start();
-        _listener.BeginGetContext(OnRequest, null);
-        Log.Info($"""Webserver started.""");
+        // _listener.Start();
+        // _listener.BeginGetContext(OnRequest, null);
+        // Log.Info($"""Webserver started.""");
+        Log.Warn("Webserver tried to start, ignoring.");
     }
 
     // Only on errors.
