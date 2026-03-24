@@ -1,9 +1,9 @@
-namespace GRPP.API.Features.Other;
+namespace GRPP.API.Features.GRPPCommands;
 
 using System;
 using CommandSystem;
 using Exiled.API.Features;
-using Extensions;
+using GRPP.Extensions;
 using UnityEngine;
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]

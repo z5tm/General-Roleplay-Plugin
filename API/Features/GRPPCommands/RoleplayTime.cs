@@ -1,4 +1,4 @@
-﻿namespace GRPP.API.Features.Other;
+﻿namespace GRPP.API.Features.GRPPCommands;
 
 using System.Collections.Generic;
 using Exiled.API.Features;

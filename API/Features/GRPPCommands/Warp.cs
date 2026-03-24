@@ -1,10 +1,10 @@
-namespace GRPP.API.Features.Other;
+namespace GRPP.API.Features.GRPPCommands;
 
 using System;
 using CommandSystem;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
-using Extensions;
+using GRPP.Extensions;
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class Warp : ICommand

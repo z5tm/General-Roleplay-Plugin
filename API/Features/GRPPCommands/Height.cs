@@ -1,10 +1,10 @@
-﻿namespace GRPP.API.Features.Other;
+﻿namespace GRPP.API.Features.GRPPCommands;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Attributes;
 using CommandSystem;
-using Extensions;
+using GRPP.API.Attributes;
+using GRPP.Extensions;
 using UnityEngine;
 
 public abstract class Height

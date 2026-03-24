@@ -144,7 +144,7 @@ public sealed class KeycardHandler : CustomItemHandler
                 break;
         }
 
-        Container.RegisterItem(ev.Item.Base, new Keycard($"{Other.Name.FirstNames[new Random().Next(Other.Name.FirstNames.Count)]} {Other.Name.LastNames[new Random().Next(Other.Name.LastNames.Count)]}", role, new Random().Next(10, 99) + "ax1", currentLevel, levels));
+        Container.RegisterItem(ev.Item.Base, new Keycard($"{GRPPCommands.Name.FirstNames[new Random().Next(GRPPCommands.Name.FirstNames.Count)]} {GRPPCommands.Name.LastNames[new Random().Next(GRPPCommands.Name.LastNames.Count)]}", role, new Random().Next(10, 99) + "ax1", currentLevel, levels));
     }
 
     private void CurrentItemChanged(ReferenceHub hub, ItemIdentifier oldItem, ItemIdentifier newItem)

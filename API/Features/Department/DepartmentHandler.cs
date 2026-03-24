@@ -10,10 +10,10 @@ using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.Events.EventArgs.Player;
 using Extensions;
-using Other;
+using GRPPCommands;
 using PlayerRoles;
 using UnityEngine;
-
+// THERE'S LIKE A HUGE HUGE HUGE AMOUNT OF LACKING NULL CHECKS IN HERE. COME BACK TO THIS SOON -Z5.
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class SetCustomRole : ICommand
 {

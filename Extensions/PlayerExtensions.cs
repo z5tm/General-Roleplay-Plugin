@@ -1,13 +1,13 @@
 ﻿namespace GRPP.Extensions;
 
 using API.Features;
-using API.Features.Other;
 using Exiled.API.Enums;
 using InventorySystem.Items.Radio;
 using MEC;
 using PlayerRoles;
 using PlayerRoles.Voice;
 using API.Features.Department;
+using API.Features.GRPPCommands;
 using UnityEngine;
 
 public static class PlayerExtensions

@@ -1,13 +1,12 @@
-﻿namespace GRPP.API.Features.Other;
+﻿namespace GRPP.API.Features.GRPPCommands;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Attributes;
 using CommandSystem;
-using Exiled.API.Features;
 using Exiled.Events.EventArgs.Player;
-using Extensions;
+using GRPP.API.Attributes;
+using GRPP.Extensions;
 using VoiceChat;
 using VoiceChat.Networking;
 

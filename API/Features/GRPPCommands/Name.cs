@@ -1,14 +1,15 @@
-namespace GRPP.API.Features.Other;
+namespace GRPP.API.Features.GRPPCommands;
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Attributes;
 using CommandSystem;
-using CustomItems;
-using Extensions;
-using Items;
+using GRPP.API.Attributes;
+using GRPP.API.Features.CustomItems;
+using GRPP.API.Features.Items;
+using GRPP.Extensions;
+using InventorySystem.Items.Usables.Scp330;
 
 public abstract class Name
 {
@@ -183,13 +184,13 @@ public class NameEnable : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Name Client Command is already</color> <color=green>Enabled</color>";
+        response = "<color=orange>Name Client Command is already</color> <color=green>Enabled</color>";
         if (Name.IsEnabled)
             return false;
 
         Name.IsEnabled = !Name.IsEnabled;
 
-        response = "<color=green>Name Client Command is now Enabled</color>";
+        response = "<color=orange>Name Client Command is now</color> <color=green>Enabled</color>";
         return true;
     }
 }
@@ -206,13 +207,13 @@ public class NameDisable : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=green>Name Client Command is already</color> <color=red>Disabled</color>";
+        response = "<color=orange>Name Client Command is already</color> <color=red>Disabled</color>";
         if (!Name.IsEnabled)
             return false;
 
         Name.IsEnabled = !Name.IsEnabled;
 
-        response = "<color=green>Name Client Command is now</color> <color=red>Disabled</color>";
+        response = "<color=orange>Name Client Command is now</color> <color=red>Disabled</color>";
         return true;
     }
 }

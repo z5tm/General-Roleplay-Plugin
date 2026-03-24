@@ -1,9 +1,9 @@
-namespace GRPP.API.Features.Other;
+namespace GRPP.API.Features.GRPPCommands;
 
-using Attributes;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.Handlers;
+using GRPP.API.Attributes;
 
 public class InfiniteRadio
 {

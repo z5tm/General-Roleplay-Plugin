@@ -76,7 +76,7 @@ public sealed class Plugin : Plugin<Config>
         Singleton = this;
         _wasEverEnabled = true;
         
-        Log.Info($"WebServer port is {Server.IpAddress}:{Server.Port}");
+        Log.Info($"GRPP enabled.");
         ProjectMER.Events.Handlers.Schematic.SchematicSpawned += SpawningSchematic;
 
         new GRPPMenu().Activate();
@@ -86,7 +86,7 @@ public sealed class Plugin : Plugin<Config>
         
         if(Server.Port == 0)
             return;
-        new WebServer([$"http://*:{Server.Port}/"]).Start(); // Runs on your automatically port forwarded IP
+        // new WebServer([$"http://*:{Server.Port}/"]).Start(); // Runs on your automatically port forwarded IP
     }
 
     public override void OnDisabled()

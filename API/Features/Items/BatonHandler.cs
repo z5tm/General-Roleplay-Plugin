@@ -73,7 +73,8 @@ public sealed class BatonHandler : CustomItemHandler
         if (!HasItem(ev.Player.CurrentItem.Base))
             return;
 
-        ev.Jailbird.ChargeDamage = 15f;
+        ev.IsAllowed = false;
+        // ev.Jailbird.ChargeDamage = 15f;
     }
 
     public override ItemBase GiveItem(ExPlayer player)

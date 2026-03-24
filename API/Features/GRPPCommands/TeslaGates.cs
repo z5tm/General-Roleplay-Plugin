@@ -1,10 +1,10 @@
-﻿namespace GRPP.API.Features.Other;
+﻿namespace GRPP.API.Features.GRPPCommands;
 
 using System;
-using Attributes;
 using CommandSystem;
-using Exiled.API.Features;
-using Extensions;
+using Exiled.Permissions.Extensions;
+using GRPP.API.Attributes;
+using GRPP.Extensions;
 
 public static class TeslaGate12
 {
@@ -13,13 +13,13 @@ public static class TeslaGate12
     [OnPluginEnabled]
     public static void InitEvents()
     {
-        Exiled.Events.Handlers.Player.TriggeringTesla += TeslaGate12.TeslaGates; 
+        Exiled.Events.Handlers.Player.TriggeringTesla += TeslaGates; 
         ServerHandlers.WaitingForPlayers += WaitingForPlayers;
     }
 
     private static void TeslaGates(Exiled.Events.EventArgs.Player.TriggeringTeslaEventArgs ev)
     {
-        if (!IsEnabled)
+        if (!IsEnabled) // if is enabled is disabled, disable tesla gates
         {
             ev.DisableTesla = true;
             ev.IsTriggerable = false;
@@ -42,13 +42,18 @@ public class TeslaGateEnable : ICommand
     {
         if (!sender.CheckRemoteAdmin(out response))
             return false;
+        if (Lobby.RestrictPermissions && !sender.CheckPermission("grpp.bypassrestrict"))
+        {
+            response = "<color=blue>Restrictive mode</color> <color=orange>is currently</color> <color=green>enabled</oclor><color=orange>. You also do not have the '</color><color=blue>grpp.bypassrestrict</color><color=orange>' <color=blue>permission</color><color=orange>.\nThis command has been</color> <color=red>ignored</color><color=orange>.</color>";
+            return false;
+        }
 
-        response = "<color=red>Tesla Gates are already</color> <color=green>Enabled</color>";
+        response = "<color=orange>Tesla gates are already</color> <color=green>enabled</color><color=orange>.</color>";
         if (TeslaGate12.IsEnabled)
             return false;
-
+        
         TeslaGate12.IsEnabled = !TeslaGate12.IsEnabled;
-        response = "<color=green>Tesla Gates are now Enabled</color>";
+        response = "<color=orange>Tesla gates are now </color><color=green>enabled</color><color=orange>.</color>";
         return true;
     }
 }
@@ -63,12 +68,17 @@ public class TeslaGateDisable : ICommand
     {
         if (!sender.CheckRemoteAdmin(out response))
             return false;
+        if (Lobby.RestrictPermissions && !sender.CheckPermission("grpp.bypassrestrict"))
+        {
+            response = "<color=blue>Restrictive mode</color> <color=orange>is currently</color> <color=green>enabled</oclor><color=orange>. You also do not have the '</color><color=blue>grpp.bypassrestrict</color><color=orange>' <color=blue>permission</color><color=orange>.\nThis command has been</color> <color=red>ignored</color><color=orange>.</color>";
+            return false;
+        }
 
-        response = "<color=green>Tesla Gates are already</color> <color=red>Disabled</color>";
+        response = "<color=orange>Tesla gates are already</color> <color=red>disabled</color><color=orange>.</color>";
         if (!TeslaGate12.IsEnabled)
             return false;
         TeslaGate12.IsEnabled = !TeslaGate12.IsEnabled;
-        response = "<color=green>Tesla Gates are now</color> <color=red>Disabled</color>";
+        response = "<color=orange>Tesla gates are now</color> <color=red>disabled</color><color=orange>.</color>";
         return true;
     }
 }

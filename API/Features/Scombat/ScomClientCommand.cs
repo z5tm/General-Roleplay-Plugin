@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommandSystem;
+using Exiled.Permissions.Extensions;
 using Extensions;
-using Other;
+using GRPPCommands;
 using PlayerRoles;
 
 [CommandHandler(typeof(ClientCommandHandler))]
@@ -21,11 +22,17 @@ public class ScomClientCommand : ICommand
     {
         var player = ExPlayer.Get((CommandSender)sender);
 
-        response = "<color=red>> You must select someone to SCOM" +
-                   "\nSCOM {ID} {MESSAGE} (Sends a message to a user)" +
-                   "\nSCOM {LIST} (Shows a list of everyone registered to SCOM)" +
-                   "\nSCOM {TIME} (Shows the current time in roleplay)" +
-                   "\nSCOM TOGGLE";
+        if (sender.CheckPermission("grpp.scomban"))
+        {
+            response = "<color=orange>You have been</color> <color=red>banned</color> <color=orange>from using the</color> <color=blue>SCOM</color> <color=orange>system.</color>";
+            return false;
+        }
+
+        response = "<color=orange>> You must select someone to</color> <color=blue>SCOM" +
+                   "\nSCOM</color> <color=orange>{</color><color=blue>ID</color><color=orange>}</color> <color=orange>{</color><color=blue>MESSAGE</color><color=orange>} (Sends a </color><color=blue>message</color> <color=orange>to a</color> <color=blue>user</color><color=orange>.)" +
+                   "\n<color=blue>SCOM</color> <color=orange>{</color><color=blue>LIST</color><color=orange>} (Shows a</color> <color=blue>list</color> <color=orange>of everyone registered to</color> <color=blue>SCOM</color><color=orange>)</color>" +
+                   "\n<color=blue>SCOM</color> <color=orange>{</color><color=blue>TIME</color><color=orange>} (Shows the current</color> <color=blue>time in <color=blue>roleplay)" +
+                   "\n<color=blue>SCOM TOGGLE</color><color=orange> (</color><color=yellow>Toggles</color> <color=orange>your ability to receive</color> <color=blue>SCOM</color><color=orange>s.)</color>";
         if (arguments.Count == 0)
             return false;
 
