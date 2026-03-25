@@ -208,8 +208,8 @@ public sealed class TearGasHandler : CustomItemHandler
 
                 ForcedHypothermiaMessage msg = new()
                 {
-                    Exposure = -1f,
-                    IsForced = true,
+                    Exposure = -1f, // this causes accuracy gain. because the fucking hypothermia is supposed to make accuracy worse, setting it to -1 increases accuracy by a crazy amount. :sob: persists through death i believe.
+                    IsForced = true, // if you set this to false it crashes you.
                     PlayerHub = player.ReferenceHub,
                 };
 

@@ -98,7 +98,7 @@ public sealed class KeycardHandler : CustomItemHandler
             case ItemType.KeycardResearchCoordinator:
                 role = "Supervisor";
                 currentLevel = 3;
-                levels = [Levels.Containment, Levels.Security];
+                levels = [Levels.Containment, Levels.Engineering];
                 break;
             case ItemType.KeycardZoneManager:
                 role = "Zone Manager";

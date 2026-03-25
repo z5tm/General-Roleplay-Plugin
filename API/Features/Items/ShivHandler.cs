@@ -86,9 +86,9 @@ public sealed class ShivHandler : CustomItemHandler
             }
 
         // var bleeding = GRPPCommands.;
-        victim.EnableEffect(EffectType.Concussed, 255, 50);
+        victim.EnableEffect(EffectType.Concussed, 15, 25);
         victim.EnableEffect(EffectType.Bleeding, 255, 50);
-        victim.EnableEffect(EffectType.Blurred, 255, 50);
+        victim.EnableEffect(EffectType.Blurred, 15, 25);
         victim.EnableEffect(EffectType.Disabled, 255, 50);
         victim.Hurt(35f, DamageType.Bleeding);
         victim.DropHeldItem(true);
@@ -116,22 +116,22 @@ public abstract class Shiv
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class ShivsEnable : ICommand
 {
-    public string Command => "EnableShivs";
-    public string[] Aliases => ["ShivsOn"];
-    public string Description => "Enables Shivs...";
+    public string Command => "turnthemshivson";
+    public string[] Aliases => ["ShivsOn", "shivon", "shivson", "shivenable", "enableshivs"];
+    public string Description => "Enables the shiv item. As soon as this is disabled, all shivs turn into adrenaline.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Shiv's are already Enabled";
+        response = "<color=blue>Shiv</color><color=orange>s are already</color> <color=green>enabled</color>";
         if (Shiv.IsEnabled)
             return false;
 
         Shiv.IsEnabled = !Shiv.IsEnabled;
 
-        response = "<color=green>Shiv's are now Enabled";
+        response = "<color=blue>Shiv</color><color=orange>s are now</color> <color=green>enabled</color>";
         return true;
     }
 }
@@ -139,22 +139,22 @@ public class ShivsEnable : ICommand
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class ShivsDisable : ICommand
 {
-    public string Command => "ShivsMining";
-    public string[] Aliases => ["ShivsOff"];
-    public string Description => "Disables Shivs...";
+    public string Command => "turnthemshivsoff";
+    public string[] Aliases => ["ShivsOff", "shivoff", "disableshivs", "shivdisable", "shivsdisable"];
+    public string Description => "Disables the shiv item. If any shivs exist, they turn into adrenaline.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Shiv's are already Disabled";
+        response = "<color=blue>Shiv</color><color=orange>s are already</color> <color=red>disabled</color><color=orange>.</color>";
         if (!Shiv.IsEnabled)
             return false;
 
         Shiv.IsEnabled = !Shiv.IsEnabled;
 
-        response = "<color=green>Shiv's are now Disabled";
+        response = "<color=blue>Shiv</color><color=orange>s are now</color> <color=red>disabled</color><color=orange>.</color>";
         return true;
     }
 }
@@ -171,9 +171,9 @@ public abstract class Mining
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class MiningEnable : ICommand
 {
-    public string Command => "EnableMining";
-    public string[] Aliases => ["MiningOn"];
-    public string Description => "Enables the Mining of Shivs...";
+    public string Command => "turnminingthemshivson";
+    public string[] Aliases => ["MiningOn", "enableminingshivs", "EnableMining", "shivminingon"];
+    public string Description => "Enables the mining of shivs.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
@@ -194,22 +194,22 @@ public class MiningEnable : ICommand
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class MiningDisable : ICommand
 {
-    public string Command => "DisableMining";
-    public string[] Aliases => ["MiningOff"];
-    public string Description => "Disables the Mining of Shivs...";
+    public string Command => "turnminingthemshivsoff";
+    public string[] Aliases => ["MiningOff", "DisableMining", "disableminingshivs", "shivminingoff"];
+    public string Description => "Disables the mining of shivs.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Mining is already Disabled";
+        response = "<color=blue>Mining</color> <color=orange>is already</color> <color=red>disabled</color><color=orange>.</color>";
         if (!Mining.IsEnabled)
             return false;
 
         Mining.IsEnabled = !Mining.IsEnabled;
 
-        response = "<color=green>Mining is now Disabled";
+        response = "<color=blue>Mining</color> <color=orange>is now</color> <color=red>disabled</color><color=orange>.</color>";
         return true;
     }
 }
@@ -237,27 +237,27 @@ public class ShivClient : ICommand
 
         if (!Physics.Raycast(ray, out var hit, 2))
         {
-            response = "<color=red>You must be at a wall";
+            response = "<color=orange>You must be at a wall</color>";
             return false;
         }
 
         if (ExPlayer.TryGet(hit.collider, out var victim))
         {
-            response = $"<color=red>You are disgusting, You did not hurt {victim.DisplayNickname}";
+            response = $"<color=orange>You tried to mine</color> <color=blue>{victim.DisplayNickname}</color><color=orange>, but failed.</color>";
             return false;
         }
 
-        response = "<color=red>I wouldn't be able to carry it anyways";
+        response = "<color=orange>I wouldn't be able to carry it anyways</color>";
         if (player.InventoryFull())
             return false;
 
         if (URandom.Range(1, 100) <= 85)
         {
-            player.ShowHint("<color=red><b>Damnit... fuck me");
+            player.ShowHint("<color=orange><b>Damnit... not this time.</b></color>");
             player.Health -= 10f;
 
-            if (player.Health <= 0) player.Kill("Their hands are bloody, looks like they was chipping at the wall");
-            response = "<color=red>Damnit... fuck me";
+            if (player.Health <= 0) player.Kill("Their hands are bloody, looks like they were chipping at the wall");
+            response = "<color=orange>Damnit... not this time.</color>";
             return false;
         }
 

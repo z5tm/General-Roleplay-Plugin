@@ -14,12 +14,10 @@
 namespace GRPP;
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using API.Attributes;
-using API.Features.Department;
 using API.Features.Menus;
 using Exiled.API.Enums;
 using Exiled.API.Features;
@@ -28,9 +26,6 @@ using ProjectMER.Events.Arguments;
 using UnityEngine;
 using Log = Exiled.API.Features.Log;
 using Server = Exiled.API.Features.Server;
-using System.Reflection.Emit;
-using CustomPlayerEffects;
-using Exiled.Loader;
 
 /// <summary>
 /// The main plugin class for this assembly.
@@ -78,14 +73,16 @@ public sealed class Plugin : Plugin<Config>
         
         Log.Info($"GRPP enabled.");
         ProjectMER.Events.Handlers.Schematic.SchematicSpawned += SpawningSchematic;
-
-        new GRPPMenu().Activate();
+        
+        if (Singleton.Config.Debug)
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+            new GRPPMenu().Activate();
+            Log.Info("Debug mode is enabled. Enabling SSS, and TLS 2 + 3 for webhook sending.");
+        }
 
         ListResourceNames();
         InvokeOnEnabledAttributes();
-        
-        if(Server.Port == 0)
-            return;
         // new WebServer([$"http://*:{Server.Port}/"]).Start(); // Runs on your automatically port forwarded IP
     }
 

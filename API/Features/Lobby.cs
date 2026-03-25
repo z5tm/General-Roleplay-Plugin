@@ -149,6 +149,11 @@ public class UseLobbyCommand : ICommand
 
         PlayerHandlers.Verified += Lobby.OnJoined;
         response = "<color=blue>Lobby</color> <color=orange>is now</color> <color=green>on</color>";
+        if (Plugin.Singleton?.Config?.RPWebHook !=null && Plugin.Singleton.Config.WebhookPlayerCountEnabled && Plugin.Singleton.Config.WebhookTpsEnabled) _ = new WebhookHandler().UseWebhook("LobbyBot", Plugin.Singleton.Config.RPWebHook, "", "", $"Players: {Server.PlayerCount}/{Server.MaxPlayers}\nTPS:{Server.Tps}", "Lobby has been enabled!", "1752220", true, true);
+        if (Plugin.Singleton?.Config?.RPWebHook !=null && !Plugin.Singleton.Config.WebhookPlayerCountEnabled && Plugin.Singleton.Config.WebhookTpsEnabled) _ = new WebhookHandler().UseWebhook("LobbyBot", Plugin.Singleton.Config.RPWebHook, "", "", $"Players: {Server.PlayerCount}/{Server.MaxPlayers}\nTPS:{Server.Tps}", "Lobby has been enabled!", "1752220", true, true);
+        if (Plugin.Singleton?.Config?.RPWebHook !=null && Plugin.Singleton.Config.WebhookPlayerCountEnabled && !Plugin.Singleton.Config.WebhookTpsEnabled) _ = new WebhookHandler().UseWebhook("LobbyBot", Plugin.Singleton.Config.RPWebHook, "", "", $"Players: {Server.PlayerCount}/{Server.MaxPlayers}\nTPS:{Server.Tps}", "Lobby has been enabled!", "1752220", true, true);
+        if (Plugin.Singleton?.Config?.RPWebHook !=null && !Plugin.Singleton.Config.WebhookPlayerCountEnabled && !Plugin.Singleton.Config.WebhookTpsEnabled) _ = new WebhookHandler().UseWebhook("LobbyBot", Plugin.Singleton.Config.RPWebHook, "", "", $"Players: {Server.PlayerCount}/{Server.MaxPlayers}\nTPS:{Server.Tps}", "Lobby has been enabled!", "1752220", true, true);
+
         return true;
     }
 }
@@ -218,6 +223,7 @@ public class BeginRoleplay : ICommand
 
         // int startTime = 0600;
         // int secondsPerHour = 600;
+        // throw new ArgumentNullException($"{arguments}"); // dw this was never included. just had to add it so i remember !
 
         // if (arguments.Count == 2 && (!int.TryParse(arguments.At(0), out startTime) || int.TryParse(arguments.At(1), out secondsPerHour) || startTime < 0 || secondsPerHour < 0))
         //     return false;
@@ -250,6 +256,7 @@ public class BeginRoleplay : ICommand
             response = Lobby.RestrictPermissions 
                 ? $"<color=green>Roleplay has begun.</color> <color=orange>The site name is</color> <color=blue>{Lobby.Site}</color><color=orange>, and restrictive mode is</color> <color=green>enabled</color><color=orange>. Not sure how, but..</color>" 
                 : $"<color=green>Roleplay has begun.</color> <color=orange>The site name is</color> <color=blue>{Lobby.Site}</color><color=orange>, and restrictive mode is</color> <color=red>disabled</color>.\n<color=orange>The server has set the allowance of RestrictiveMode to:</color> <color=blue>{Plugin.Singleton.Config.RestrictiveMode}</color><color=orange>.</color>\n<color=orange>Note: To set RestrictiveMode, use</color> <color=blue>`rp1 sitenumber yes/no`</color> <color=orange>or</color> <color=blue>`rp1 sitenumber 1/0`</color>";
+            if (Plugin.Singleton?.Config?.RPWebHook !=null && Plugin.Singleton.Config.WebhookPlayerCountEnabled && Plugin.Singleton.Config.WebhookTpsEnabled) _ = new WebhookHandler().UseWebhook("RoleplayBot", Plugin.Singleton.Config.RPWebHook, "", "", $"Players: {Server.PlayerCount}/{Server.MaxPlayers}\nTPS:{Server.Tps}", "A roleplay has been started!", "7419530", true, true);
             return true;
         }
 
@@ -260,6 +267,7 @@ public class BeginRoleplay : ICommand
             response = Lobby.RestrictPermissions 
                 ? $"<color=green>Roleplay has begun.</color> <color=orange>The site name is</color> <color=blue>{Lobby.Site}</color><color=orange>, and restrictive mode is</color> <color=green>enabled</color>." 
                     : $"<color=green>Roleplay has begun.</color> <color=orange>The site name is</color> <color=blue>{Lobby.Site}</color><color=orange>, and restrictive mode is</color> <color=red>disabled</color>.\n<color=orange>Note that restrictive mode is, by default, disabled. Also, the server has set the allowance of RestrictiveMode to: <color=blue>{Plugin.Singleton.Config.RestrictiveMode}</color><color=orange>.</color>";
+            if (Plugin.Singleton?.Config?.RPWebHook !=null && Plugin.Singleton.Config.WebhookPlayerCountEnabled && Plugin.Singleton.Config.WebhookTpsEnabled) _ = new WebhookHandler().UseWebhook("RoleplayBot", Plugin.Singleton.Config.RPWebHook, "", "", $"Players: {Server.PlayerCount}/{Server.MaxPlayers}\nTPS:{Server.Tps}", "A roleplay has been started!", "7419530", true, true);
             return true;
         }
 
@@ -270,7 +278,7 @@ public class BeginRoleplay : ICommand
         // }; i have no idea how to use switch statements. i'll try this again later.
 
         response = $"Some error occured.\n Notable values:\nSite:{Lobby.Site}\nRestrictPermissions:{Lobby.RestrictPermissions}\nRestrictAllowed:{Plugin.Singleton.Config.RestrictiveMode}\n ";
-        return true;
+        return false;
     }
 
     public static void GiveInventories()

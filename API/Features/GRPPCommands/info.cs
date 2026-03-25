@@ -90,7 +90,7 @@ public class InfoClient : ICommand
             return true;
         }
         foreach (var word in arguments)
-        foreach (var _ in Plugin.Singleton.Config.BlackList.Where(target => word.Equals(target, StringComparison.OrdinalIgnoreCase))) player.Ban(1577000000, "Automated ban. Appeal on the discord if you believe this was false.");
+        foreach (var _ in Plugin.Singleton.Config.Blocklist.Where(target => word.Equals(target, StringComparison.OrdinalIgnoreCase))) player.Ban(1577000000, "Automated ban. Appeal on the discord if you believe this was false.");
 
         player.CustomInfo = string.Join(" ", arguments);
 
