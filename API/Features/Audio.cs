@@ -28,12 +28,12 @@ public class Audio : ICommand
                    "<color=yellow>> Play {ID} {Loop?} {Local?} {SoundName}\n" +
                    "<color=yellow>> Stop {ID}";
 
-        if (!Directory.Exists(Path.Combine(Paths.Plugins, "audio")))
-            Directory.CreateDirectory(Path.Combine(Paths.Plugins, "audio"));
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP", "audio")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP", "audio"));
 
         if (arguments.Count == 0)
         {
-            foreach (var file in Directory.GetFiles(Path.Combine(Paths.Plugins, "audio"), "*.ogg", SearchOption.AllDirectories)) sender.Respond($"<color=green>> {file.Replace(".ogg", "").Replace(Path.Combine(Paths.Plugins, "audio") + "/", "")}");
+            foreach (var file in Directory.GetFiles(Path.Combine(Paths.Configs, "GRPP", "audio"), "*.ogg", SearchOption.AllDirectories)) sender.Respond($"<color=green>> {file.Replace(".ogg", "").Replace(Path.Combine(Paths.Configs, "GRPP", "audio") + "/", "")}");
 
             response = $"{response}\n<color=green>> Task Completed";
             return true;
@@ -76,9 +76,9 @@ public class Audio : ICommand
         var offset = new ArraySegment<string>(arguments.Array!, arguments.Offset + 4, arguments.Count - 4);
         var audioToPlay = string.Join(" ", offset);
 
-        foreach (var file in Directory.GetFiles(Path.Combine(Paths.Plugins, "audio"), "*.ogg", SearchOption.AllDirectories))
+        foreach (var file in Directory.GetFiles(Path.Combine(Paths.Configs, "GRPP", "audio"), "*.ogg", SearchOption.AllDirectories))
         {
-            var fileName = file.Replace(".ogg", "").Replace(Path.Combine(Paths.Plugins, "audio") + "/", "");
+            var fileName = file.Replace(".ogg", "").Replace(Path.Combine(Paths.Configs, "GRPP", "audio") + "/", "");
             if (fileName != audioToPlay) continue;
             AudioClipStorage.LoadClip(file, fileName);
             var audioPlayer = AudioPlayer.Create($"AudioPlayer {controllerId}", controllerId: controllerId);

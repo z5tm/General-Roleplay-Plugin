@@ -14,14 +14,14 @@ public class DataPlayer
     [OnPluginEnabled]
     public static void Init()
     {
-        if (!Directory.Exists(Path.Combine(Paths.Plugins, "GRPP")))
-            Directory.CreateDirectory(Path.Combine(Paths.Plugins, "GRPP"));
-        if (!File.Exists(Path.Combine(Paths.Plugins, "GRPP", "PlayerData.json")))
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP"));
+        if (!File.Exists(Path.Combine(Paths.Configs, "GRPP", "PlayerData.json")))
         {
             PlayersData = new PlayersData();
-            File.WriteAllText(Path.Combine(Paths.Plugins, "GRPP", "PlayerData.json"), JsonConvert.SerializeObject(PlayersData, Formatting.Indented));
+            File.WriteAllText(Path.Combine(Paths.Configs, "GRPP", "PlayerData.json"), JsonConvert.SerializeObject(PlayersData, Formatting.Indented));
         }
-        else PlayersData = JsonConvert.DeserializeObject<PlayersData>(File.ReadAllText(Path.Combine(Paths.Plugins, "GRPP", "PlayerData.json")));
+        else PlayersData = JsonConvert.DeserializeObject<PlayersData>(File.ReadAllText(Path.Combine(Paths.Configs, "GRPP", "PlayerData.json")));
     }
 
     public static PlayerData AddPlayer(string id, string nickName)
@@ -115,7 +115,7 @@ public class DataPlayer
         return players;
     }
 
-    public static void UpdateData() => File.WriteAllText(Path.Combine(Paths.Plugins, "GRPP", "PlayerData.json"), JsonConvert.SerializeObject(PlayersData, Formatting.Indented));
+    public static void UpdateData() => File.WriteAllText(Path.Combine(Paths.Configs, "GRPP", "PlayerData.json"), JsonConvert.SerializeObject(PlayersData, Formatting.Indented));
 }
 
 public class PlayersData
