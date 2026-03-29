@@ -92,7 +92,9 @@ public class SetCustomRole : ICommand
                 ExPlayer.Get(target).CustomInfo = $"[- {defaultRank.Value.Key} -]\n{role.Role.CustomI}";
                 ExPlayer.Get(target).Scale = Vector3.one * URandom.Range(0.9f, 1.1f);
 
-                foreach (var item in defaultRank.Value.Value.LoadOut) BeginRoleplay.GetItem(item, out _).GiveItem(ExPlayer.Get(target));
+                if (defaultRank.Value.Value.LoadOut != null)
+                    foreach (var item in defaultRank.Value.Value.LoadOut)
+                        BeginRoleplay.GetItem(item, out _)?.GiveItem(ExPlayer.Get(target));
 
                 response = "<color=green>Set the role of the dummy.";
                 return true;
