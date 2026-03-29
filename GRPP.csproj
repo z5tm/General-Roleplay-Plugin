@@ -7,10 +7,14 @@
         <OutDir>bin\$(Configuration)_$(Platform)\</OutDir>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <DebugSymbols>false</DebugSymbols>
+        <DebugSymbols>false</DebugSymbols> 
         <DebugType>none</DebugType>
         <Optimize>true</Optimize>
+<!--    <DebugSymbols>true</DebugSymbols>   -->
+<!--    <DebugType>full</DebugType> -->
+<!--    <Optimize>false</Optimize>  -->
         <Platforms>x64</Platforms>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44.1" PrivateAssets="all" />
@@ -62,7 +66,7 @@
         <EditorConfigFiles Remove=".editorconfig" />
     </ItemGroup>
 
-    <Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Target Name="ILRepacker" AfterTargets="Build"> <!--Condition="'$(Configuration)' == 'Release'-->
         <ItemGroup>
             <InputAssemblies Include="$(TargetDir)$(AssemblyName).dll"/> <!---->
             
@@ -86,6 +90,7 @@
             TargetKind="Dll"
             OutputFile="$(TargetDir)$(AssemblyName).dll"
             LibraryPath="@(LibraryPath)"
+            DebugInfo = "true"
         />
     </Target>
 <!--    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">-->
