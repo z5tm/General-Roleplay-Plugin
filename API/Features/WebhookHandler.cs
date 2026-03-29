@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 public class WebhookHandler
 {
     // // int threads = Environment.ProcessorCount; // just in case we ever need to modify this to optimize it for better-suited systems in the future, i'll keep this here - as i access this file often.
-    private static readonly HttpClient _client  = new HttpClient();
+    private static readonly HttpClient Client  = new HttpClient();
     
     public async Task UseWebhook(string webhookNameToUse, string webhookUrl, string arg3, string arg4, string description, string title,
         string color, bool inline, bool timestamps)
@@ -70,35 +70,28 @@ public class WebhookHandler
 
         try
         {
-            var response = await _client.PostAsync(url, content);
+            var response = await Client.PostAsync(url, content);
             if (response.IsSuccessStatusCode)
-            {
-                Log.Debug(("WOOO SUCCESS ON WEBHOOK!!!"));
-            }
+                Log.Info("WOOO SUCCESS ON WEBHOOK!!!");
             else
-            {
-                Log.Debug($"Failed. {response.StatusCode}, {await response.Content.ReadAsStringAsync()}");
-            }
+                Log.Error(
+                    $"Failed. \"{response.ReasonPhrase}\", {response.StatusCode}, {await response.Content.ReadAsStringAsync()}"); // $""" text """ // MAY be more reasonable?? so edit this whenever if you think it's better !
+        }
+        catch (HttpRequestException e)
+        {
+            Log.Error($"HTTP Request Exception. \"{e.Message}\", Stacktrace: \"{e.StackTrace}\"");
+        }
+        catch (TaskCanceledException e)
+        {
+            Log.Error($"Task failed to complete its course. \"{e.Task}\", \"{e.Message}\"");
         }
         catch (Exception exception)
         {
-            Log.Debug($"Exception. {exception}");
+            Log.Debug($"General exception. {exception}");
         }
-        // var request = WebRequest.CreateHttp(url);
-        // request.ContentType = "application/json";
-        // request.Method = "POST";
-        //
-        // using (var writer = new StreamWriter(request.GetRequestStream()))
-        // {
-        //     writer.Write(jsonPayload);
-        // }
-        //
-        // var response = request.GetResponse();
-        //
-        // using (var reader = new StreamReader(response.GetResponseStream() ?? Stream.Null))
-        // {
-        //     var responseText = reader.ReadToEnd();
-        //     Console.WriteLine($"Webhook Response: {responseText}");
-        // }
+        finally
+        {
+            Log.Info("Requested. Cleaning up.."); // nothing to clean up rn, but good to know there's a `finally` !!!
+        }
     }
 }
