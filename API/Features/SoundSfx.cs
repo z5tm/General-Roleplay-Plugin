@@ -63,7 +63,8 @@ public class SoundSfx
     {
         public bool JustActivated = justActivated;
         public float Timing = timing;
-    }
+    } 
+    // ev.Player.GameObject.GetComponent()
     public static void Shot(ShotEventArgs ev)
     {
         if (ev.Firearm.HasAttachment(AttachmentName.SoundSuppressor))

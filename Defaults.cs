@@ -12,5 +12,9 @@ public static class Defaults
     public const bool WebhookRPTimeStamps = true;
     public const string WebhookRPExtraArgTitle = "";
     public const string WebhookRPExtraArgDesc = "";
+    public const int NameMaxLength = 25;
+    public const int InfoMaxLength = 50;
+    public const float MaxHeight = 1.1f;
+    public const float MinHeight = 0.9f;
 
 }

@@ -92,34 +92,35 @@ public sealed class TaserHandler : CustomItemHandler
         
         // I'm not gonna fucking do EnableEffects
         // okay I see what stick was saying here. me neither. -z5
+        // came back to this with a lot more knowledge and i'm still not gonna attempt that -z5
         Timing.RunCoroutine(RotateFastLeftRight(ev.Target));
         ev.Target.EnableEffect(EffectType.Deafened, 255, 10f);
         ev.Target.EnableEffect(EffectType.AmnesiaItems, 255, 10f);
-        ev.Target.EnableEffect(EffectType.Blinded, 255, 30f);
+        ev.Target.EnableEffect(EffectType.Blurred, 50, 30f);
         ev.Target.EnableEffect(EffectType.Slowness, 20, 60f);
-        ev.Target.EnableEffect(EffectType.Ensnared, 255, 6f);
+        ev.Target.EnableEffect(EffectType.Ensnared, 255, 15f);
         ev.Target.EnableEffect<Exhausted>(40f);
     }
 
-    public void Hurting(HurtingEventArgs ev)
+    private void Hurting(HurtingEventArgs ev)
     {
         if (ev.Attacker == null)
             return;
         if (ev.Player == null)
             return;
         
-        var item = ev.Attacker.CurrentItem?.Base;
-
-        if (item == null)
+        
+        if (ev.Attacker?.CurrentItem?.Base == null)
             return;
-        if (!HasItem(ev?.Attacker?.CurrentItem?.Base))
+
+        if (!HasItem(ev.Attacker.CurrentItem.Base))
             return;
         ev.Amount = 10f;
     }
 
-    public IEnumerator<float> RotateFastLeftRight(ExPlayer player)
+    private IEnumerator<float> RotateFastLeftRight(ExPlayer player)
     {
-        if (player == null || !player.IsAlive || !player.IsConnected)
+        if (!player.IsAlive || !player.IsConnected)
             yield break;
         var elapsedTime = 0f;
         const float duration = 6f;
