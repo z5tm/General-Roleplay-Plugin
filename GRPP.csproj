@@ -4,7 +4,7 @@
         <Product>GRPP</Product>
         <TargetFramework>net481</TargetFramework>
         <LangVersion>14.0</LangVersion>
-        <OutDir>bin\$(Configuration)_$(Platform)\</OutDir>
+        <OutDir>bin/$(Configuration)_$(Platform)/</OutDir>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <DebugSymbols>false</DebugSymbols> 
@@ -17,8 +17,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44.1" PrivateAssets="all" />
-        <PackageReference Include="ExMod.Exiled" Version="9.13.2" />
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44.2" PrivateAssets="all" />
+        <PackageReference Include="ExMod.Exiled" Version="9.13.3" />
         <PackageReference Include="Mono.HttpUtility" Version="1.0.0.1"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="BigHelp.Http" Version="0.3.2"/>
@@ -32,29 +32,28 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="Northwood.LabAPI" Version="1.1.6" />
+        <PackageReference Include="Northwood.LabAPI" Version="1.1.6.1" />
 
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
     </ItemGroup>
 
     <ItemGroup>
         <Reference Include="ProjectMer" HintPath="lib/ProjectMER.dll" Private="False" />
-        <Reference Include="Mirror" HintPath="lib/Mirror-Publicized.dll" Private="False" />
         <Reference Include="AudioPlayer" HintPath="lib/AudioPlayer.dll" Private="False" />
-        <Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)\Assembly-CSharp-Publicized.dll" Private="False" />
-        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll" Private="False" />
-        <Reference Include="Pooling" HintPath="$(SL_REFERENCES)\Pooling.dll" Private="False" />
-        <Reference Include="Unity.TextMeshPro" HintPath="$(SL_REFERENCES)\Unity.TextMeshPro.dll" Private="False" />
-        <Reference Include="UnityEngine" HintPath="$(SL_REFERENCES)\UnityEngine.dll" Private="False" />
-        <Reference Include="UnityEngine.AIModule" HintPath="$(SL_REFERENCES)\UnityEngine.AIModule.dll" Private="False" />
-        <Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" Private="False" />
-        <Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" Private="False" />
-        <Reference Include="UnityEngine.AnimationModule" HintPath="$(SL_REFERENCES)\UnityEngine.AnimationModule.dll" Private="False" />
-        <Reference Include="UnityEngine.TerrainModule" HintPath="$(SL_REFERENCES)\UnityEngine.TerrainModule.dll" Private="False" />
-        <!--<Reference Include="System.ComponentModel.DataAnnotations" Private="True"/>-->
+        <Reference Include="Mirror" HintPath="$(SL_REFERENCES)/Mirror-Publicized.dll" Private="False" />
+        <Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)/Assembly-CSharp-Publicized.dll" Private="False" />
+        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(SL_REFERENCES)/Assembly-CSharp-firstpass.dll" Private="False" />
+        <Reference Include="Pooling" HintPath="$(SL_REFERENCES)/Pooling.dll" Private="False" />
+        <Reference Include="Unity.TextMeshPro" HintPath="$(SL_REFERENCES)/Unity.TextMeshPro.dll" Private="False" />
+        <Reference Include="UnityEngine" HintPath="$(SL_REFERENCES)/UnityEngine.dll" Private="False" />
+        <Reference Include="UnityEngine.AIModule" HintPath="$(SL_REFERENCES)/UnityEngine.AIModule.dll" Private="False" />
+        <Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)/UnityEngine.CoreModule.dll" Private="False" />
+        <Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)/UnityEngine.PhysicsModule.dll" Private="False" />
+        <Reference Include="UnityEngine.AnimationModule" HintPath="$(SL_REFERENCES)/UnityEngine.AnimationModule.dll" Private="False" />
+        <Reference Include="UnityEngine.TerrainModule" HintPath="$(SL_REFERENCES)/UnityEngine.TerrainModule.dll" Private="False" />
     </ItemGroup>
     <ItemGroup>
-        <_DepsDlls Include="$(MSBuildProjectDirectory)\deps\*.dll" />
+        <_DepsDlls Include="$(MSBuildProjectDirectory)/deps/*.dll" />
     </ItemGroup>
 
     <ItemGroup>
@@ -81,8 +80,8 @@
             <InputAssemblies Include="deps/AudioPlayerApi.dll"/>
             <InputAssemblies Include="$(TargetDir)EasyTmp.dll"/>
             <!--<InputAssemblies Include="$(TargetDir).dll"/>-->
-            <LibraryPath Include="$(NuGetPackageRoot)exmod.exiled/9.13.1/lib/net48/"/>
-            <LibraryPath Include="$(NuGetPackageRoot)northwood.labapi/1.1.5/lib/net48/"/>
+            <LibraryPath Include="$(NuGetPackageRoot)exmod.exiled/9.13.3/lib/net48/"/>
+            <LibraryPath Include="$(NuGetPackageRoot)northwood.labapi/1.1.6.1/lib/net48/"/>
             <LibraryPath Include="$(SL_REFERENCES)"/>
         </ItemGroup>
         <ILRepack

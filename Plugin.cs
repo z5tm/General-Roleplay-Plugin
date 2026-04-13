@@ -25,9 +25,6 @@ using ProjectMER.Events.Arguments;
 using UnityEngine;
 using Log = Exiled.API.Features.Log;
 
-/// <summary>
-/// The main plugin class for this assembly.
-/// </summary>
 public sealed class Plugin : Plugin<Config>
 {
     static Plugin()
@@ -53,7 +50,7 @@ public sealed class Plugin : Plugin<Config>
 
     public override string Name => "grpp"; // General Roleplay Plugin
     public override string Author => "Site-27 & 12 Development Team"; // Thank you Stick and VisLuke
-    public override Version Version => new(1, 2, 0); // Reset to v1 due to name change
+    public override Version Version => new(1, 3, 0); // Reset to v1 due to name change
 
     public static Plugin Singleton = null!;
     public static Harmony Harmony;
@@ -89,12 +86,7 @@ public sealed class Plugin : Plugin<Config>
     public override void OnDisabled()
     {
         // base.OnDisabled();
-        // if (!Config.ConfigurationComplete)
-        // {
-        //     Log.Error(
-        //         "GRPP has either not been configured or encountered an error during loading the configuration. This WILL cause issues, due to the early state of the plugin. For safety, the plugin has been disabled.");
-        //     return;
-        // }
+       
 
         // if ()
         // {
@@ -107,7 +99,7 @@ public sealed class Plugin : Plugin<Config>
     {
         foreach (var gameObject in ev.Schematic.AttachedBlocks)
         {
-            GameObject resultObj;
+            GameObject? resultObj;
 
             var objPos = gameObject.transform.position;
             var objRot = gameObject.transform.rotation;
