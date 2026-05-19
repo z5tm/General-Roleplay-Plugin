@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features;
+﻿namespace GRPP.API.Features;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -48,13 +48,13 @@ public class EnableSpawnWaves : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Spawn Waves are already enabled";
+        response = "<color=blue>Spawnwaves</color> <color=orange>are already</color> <color=green>enabled</color><color=orange>.</color>";
         if (SpawnWaves.IsEnabled)
             return false;
 
         SpawnWaves.IsEnabled = !SpawnWaves.IsEnabled;
 
-        response = "<color=green>Spawn Waves are now Enabled";
+        response = "<color=blue>Spawnwaves</color> <color=orange>are now</color> <color=green>enabled</color><color=orange>.</color>";
         return true;
     }
 }
@@ -71,13 +71,13 @@ public class DisableSpawnWaves : ICommand
         if (!sender.CheckRemoteAdmin(out response))
             return false;
 
-        response = "<color=red>Spawn Waves are already disabled";
+        response = "<color=blue>Spawnwaves</color> <color=orange>are already</color> <color=red>disabled</color><color=orange>.</color>";
         if (!SpawnWaves.IsEnabled)
             return false;
 
         SpawnWaves.IsEnabled = !SpawnWaves.IsEnabled;
 
-        response = "<color=green>Spawn Waves are now Disabled";
+        response = "<color=blue>Spawnwaves</color> <color=orange>are now</color> <color=red>disabled</color><color=orange>.</color>";
         return true;
     }
 }

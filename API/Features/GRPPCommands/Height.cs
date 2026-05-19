@@ -1,28 +1,31 @@
-﻿namespace Site12.API.Features.Other;
+﻿namespace GRPP.API.Features.GRPPCommands;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Attributes;
 using CommandSystem;
-using Extensions;
+using GRPP.API.Attributes;
+using GRPP.Extensions;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public abstract class Height
 {
     public static bool IsEnabled;
-
+    
+    [UsedImplicitly]
     [OnPluginEnabled]
     public static void InitEvents() => ServerHandlers.WaitingForPlayers += WaitingForPlayers;
 
     private static void WaitingForPlayers() => IsEnabled = false;
 }
 
+[UsedImplicitly]
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class HeightEnable : ICommand
 {
-    public string Command => "HeightEnable";
-    public string[] Aliases => ["HeightOn", "OnHeight", "EnableHeight", "h1"];
-    public string Description => "Enables the Height Client Command";
+    public string Command => "HeightOn";
+    public string[] Aliases => ["EnableHeight", "OnHeight", "HeightEnable", "h1"];
+    public string Description => "Enables the client command .height.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {
@@ -40,12 +43,13 @@ public class HeightEnable : ICommand
     }
 }
 
+[UsedImplicitly]
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class HeightDisable : ICommand
 {
-    public string Command => "HeightDisable";
-    public string[] Aliases => ["HeightOff", "OffHeight", "DisableHeight", "h0"];
-    public string Description => "Disables the Height Client Command";
+    public string Command => "HeightOff";
+    public string[] Aliases => ["DisableHeight", "OffHeight", "HeightDisable", "h0"];
+    public string Description => "Disables the client command .height.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {
@@ -63,12 +67,13 @@ public class HeightDisable : ICommand
     }
 }
 
+[UsedImplicitly]
 [CommandHandler(typeof(ClientCommandHandler))]
 public class HeightClient : ICommand
 {
     public string Command => "Height";
-    public string[] Aliases => ["height", "size"];
-    public string Description => "Set a custom height between 165cm (5'5) and 201cm (6'7) : Height (New Height)";
+    public string[] Aliases => ["setheight", "size"];
+    public string Description => "Sets a custom height to enhance RP.";
 
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
@@ -110,11 +115,12 @@ public class HeightClient : ICommand
             return false;
         }
         var final = valueCm / 183f;
-        final = Mathf.Clamp(final, 0.9f, 1.1f);
+        final = Mathf.Clamp(final, 
+            min:Plugin.Singleton.Config.MinHeight ?? Defaults.MinHeight, 
+            max:Plugin.Singleton.Config.MaxHeight ?? Defaults.MaxHeight);
 
-        response = "You are an SCP!";
-        if (player.IsScp)
-            return false;
+        response = "You are an SCP!"; if (player.IsScp) return false;
+        
         player.Scale = Vector3.one * final;
         response = $"Height changed successfully to {Mathf.RoundToInt(final * 183f)}cm";
         return true;

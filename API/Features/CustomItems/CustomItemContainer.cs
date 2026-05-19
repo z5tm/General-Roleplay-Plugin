@@ -1,25 +1,29 @@
-﻿namespace Site12.API.Features.CustomItems;
+﻿namespace GRPP.API.Features.CustomItems;
 
 using System;
 using System.Collections.Generic;
 using InventorySystem.Items;
 using InventorySystem.Items.Pickups;
+using Logger = LabApi.Features.Console.Logger;
 
 public sealed class CustomItemContainer
 {
     private readonly HashSet<ushort> _serials = [];
 
-    public void RegisterItem(ItemPickupBase pickup)
+    public void RegisterItem(ItemPickupBase? pickup)
     {
-        if (pickup == null)
+        if (!pickup)
+        {
+            Logger.Warn($"WARNING: NullRef suppressed. Pickup was null in RegisterItem.\nNo information can be provided, as pickup was the only required component.");
             throw new ArgumentNullException(nameof(pickup));
+        }
 
         _serials.Add(pickup.Info.Serial);
     }
 
     public void RegisterItem(ItemBase item)
     {
-        if (item == null)
+        if (!item)
             throw new ArgumentNullException(nameof(item));
 
         _serials.Add(item.ItemSerial);
@@ -53,15 +57,12 @@ public sealed class CustomItemContainer
 
     public bool HasItem(ItemPickupBase pickup)
     {
-        return pickup != null && _serials.Contains(pickup.Info.Serial);
+        return pickup && _serials.Contains(pickup.Info.Serial); // return pickup is LITERALLY Just /* if (pickup == null) return; _serials.Contains(pickup.Info.Serial); */ - which is SO cool.
     }
 
     public bool HasItem(ItemBase item)
     {
-        if (item == null)
-            return false;
-
-        return _serials.Contains(item.ItemSerial);
+        return item && _serials.Contains(item.ItemSerial);
     }
 
     public bool HasItem(ushort serial)

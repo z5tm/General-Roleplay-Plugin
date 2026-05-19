@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.CustomItems;
+﻿namespace GRPP.API.Features.CustomItems;
 
 using InventorySystem.Items;
 using InventorySystem.Items.Pickups;

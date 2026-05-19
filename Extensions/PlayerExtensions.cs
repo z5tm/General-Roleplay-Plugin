@@ -1,13 +1,14 @@
-﻿namespace Site12.Extensions;
+﻿namespace GRPP.Extensions;
 
 using API.Features;
-using API.Features.Other;
 using Exiled.API.Enums;
 using InventorySystem.Items.Radio;
 using MEC;
 using PlayerRoles;
 using PlayerRoles.Voice;
 using API.Features.Department;
+using API.Features.GRPPCommands;
+using API.Features.Lobby;
 using UnityEngine;
 
 public static class PlayerExtensions
@@ -38,21 +39,21 @@ public static class PlayerExtensions
         player.CustomInfo = $"[- {curRole.RankName} -]\n{curRole.RoleEntry.Role.CustomI}";
         player.Scale = Vector3.one * URandom.Range(0.9f, 1.1f);
 
-        if (roleSpawnFlags.HasFlag(RoleSpawnFlags.AssignInventory) && Lobby.HasRoleplayStarted || !Lobby.IsRoleplay && roleSpawnFlags.HasFlag(RoleSpawnFlags.AssignInventory))
+        if (roleSpawnFlags.HasFlag(RoleSpawnFlags.AssignInventory) && Main.HasRoleplayStarted || !Main.IsRoleplay && roleSpawnFlags.HasFlag(RoleSpawnFlags.AssignInventory))
         {
             player.ClearAmmo();
             player.ClearInventory();
             foreach (var item in curRole.Rank.LoadOut)
             {
                 BeginRoleplay.GetItem(item, out var cost, player).GiveItem(player);
-                if (!Lobby.IsRoleplay) continue;
+                if (!Main.IsRoleplay) continue;
                 Department.DepartmentsData[Department.GetDepartmentByRole(curRole.RoleEntry)].Balance -= cost;
 
                 Department.UpdateDepartmentData(Department.GetDepartmentByRole(curRole.RoleEntry));
             }
         }
 
-        if (Lobby.HasRoleplayStarted)
+        if (Main.HasRoleplayStarted)
             Timing.RunCoroutine(player.ScomPlayer().TrackHours());
         return true;
     }

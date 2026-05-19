@@ -1,69 +1,80 @@
-﻿namespace Site12;
+﻿// General Roleplay Plugin
+// Copyright (C) 2025 Site-12, VisLuke, SticksDeveloper
+// Copyright (C) 2026 z5tm
+//
+// This file is part of General Roleplay Plugin.
+//
+// General Roleplay Plugin is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//
+// General Roleplay Plugin is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>.
+//
+
+namespace GRPP;
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using API.Attributes;
-using API.Features.Department;
-using API.Features.Menus;
+using API.Core;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using HarmonyLib;
 using ProjectMER.Events.Arguments;
 using UnityEngine;
 using Log = Exiled.API.Features.Log;
-using Server = Exiled.API.Features.Server;
 
-/// <summary>
-/// The main plugin class for this assembly.
-/// </summary>
 public sealed class Plugin : Plugin<Config>
 {
     static Plugin()
     {
-        Harmony = new Harmony("com.site12.main");
+        Harmony = new Harmony("com.grpp.main");
         Harmony.PatchAll();
     }
 
-    public override string Name => "Site12";
-    public override string Author => "Site-12 Development Team";
-    public override Version Version => new(3, 0, 4); // Pre-Release 4 (Final version you can receive)
+    public override string Name => "grpp"; // General Roleplay Plugin
+    public override string Author => "z5tm & Site-12 Development Team"; // Thank you Stick and VisLuke [i have now been informed that there were many more. thanks y'all :fire:]
+    public override Version Version => new(1, 4, 0);
 
-    public static Plugin Singleton;
+    public static Plugin? Singleton { get; set; }
     public static Harmony Harmony;
     private bool _wasEverEnabled;
+    public InternalConfiguration? GlobalConfig { get; set; }
 
     public override void OnEnabled()
     {
         base.OnEnabled();
+        Singleton = this;
 
-        if (!Config.ConfigurationComplete)
-        {
-            Log.Error("Site-12 was not configured properly...");
-            return;
-        }
-
+        GlobalConfig = new InternalConfiguration();
         if (_wasEverEnabled)
             return;
 
-        Singleton = this;
         _wasEverEnabled = true;
 
-        new WebServer([$"http://*:{Server.Port}/"]).Start(); // Runs on your automatically port forwarded IP
-
+        Log.Info($"GRPP enabled.");
         ProjectMER.Events.Handlers.Schematic.SchematicSpawned += SpawningSchematic;
-
-        new Site12Menu().Activate();
-
+        
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+        Log.Debug("Debug mode is enabled. Not enabling SSS as it's currently broken, and enabling TLS 2 + 3 for webhook sending.");
         ListResourceNames();
         InvokeOnEnabledAttributes();
+    }
+
+    public override void OnDisabled()
+    {
+        Singleton = null;
+        base.OnDisabled();
+        GlobalConfig = null;
     }
 
     private static void SpawningSchematic(SchematicSpawnedEventArgs ev)
     {
         foreach (var gameObject in ev.Schematic.AttachedBlocks)
         {
-            GameObject resultObj;
+            GameObject? resultObj;
 
             var objPos = gameObject.transform.position;
             var objRot = gameObject.transform.rotation;

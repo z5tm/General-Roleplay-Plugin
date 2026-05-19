@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features.Department;
+﻿namespace GRPP.API.Features.Department;
 
 using System;
 using System.Collections.Generic;
@@ -10,10 +10,11 @@ using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.Events.EventArgs.Player;
 using Extensions;
-using Other;
+using GRPPCommands;
+using Lobby;
 using PlayerRoles;
 using UnityEngine;
-
+// THERE'S LIKE A HUGE HUGE HUGE AMOUNT OF LACKING NULL CHECKS IN HERE. COME BACK TO THIS SOON -Z5.
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
 public class SetCustomRole : ICommand
 {
@@ -92,7 +93,9 @@ public class SetCustomRole : ICommand
                 ExPlayer.Get(target).CustomInfo = $"[- {defaultRank.Value.Key} -]\n{role.Role.CustomI}";
                 ExPlayer.Get(target).Scale = Vector3.one * URandom.Range(0.9f, 1.1f);
 
-                foreach (var item in defaultRank.Value.Value.LoadOut) BeginRoleplay.GetItem(item, out _).GiveItem(ExPlayer.Get(target));
+                if (defaultRank.Value.Value.LoadOut != null)
+                    foreach (var item in defaultRank.Value.Value.LoadOut)
+                        BeginRoleplay.GetItem(item, out _)?.GiveItem(ExPlayer.Get(target));
 
                 response = "<color=green>Set the role of the dummy.";
                 return true;
@@ -227,7 +230,7 @@ public class SetCustomRank : ICommand
 
             player.CustomInfo = $"[- {player.ScomPlayer().CurrentRole.RankName} -]\n{player.ScomPlayer().CurrentRole.RoleEntry.Role.CustomI}";
 
-            if (Lobby.HasRoleplayStarted || !Lobby.IsRoleplay)
+            if (Main.HasRoleplayStarted || !Main.IsRoleplay)
             {
                 player.ClearAmmo();
                 player.ClearInventory();
@@ -236,7 +239,7 @@ public class SetCustomRank : ICommand
                 {
                     BeginRoleplay.GetItem(item, out var cost, player).GiveItem(player);
 
-                    if (!Lobby.IsRoleplay) continue;
+                    if (!Main.IsRoleplay) continue;
                     Department.DepartmentsData[Department.GetDepartmentByRole(player.ScomPlayer().CurrentRole.RoleEntry)].Balance -= cost;
 
                     Department.UpdateDepartmentData(Department.GetDepartmentByRole(player.ScomPlayer().CurrentRole.RoleEntry));
@@ -280,7 +283,7 @@ public class SetCustomRank : ICommand
         target.Role.Set(target.ScomPlayer().CurrentRole.Rank.RoleTypeID, SpawnReason.None, RoleSpawnFlags.None);
         target.CustomInfo = $"[- {target.ScomPlayer().CurrentRole.RankName} -]\n{target.ScomPlayer().CurrentRole.RoleEntry.Role.CustomI}";
 
-        if (Lobby.HasRoleplayStarted || !Lobby.IsRoleplay)
+        if (Main.HasRoleplayStarted || !Main.IsRoleplay)
         {
             target.ClearAmmo();
             target.ClearInventory();
@@ -289,7 +292,7 @@ public class SetCustomRank : ICommand
             {
                 BeginRoleplay.GetItem(item, out var cost, target).GiveItem(target);
 
-                if (!Lobby.IsRoleplay) continue;
+                if (!Main.IsRoleplay) continue;
                 var data = Department.DepartmentsData[Department.GetDepartmentByRole(target.ScomPlayer().CurrentRole.RoleEntry)];
                 data.Balance -= cost;
 
@@ -312,7 +315,7 @@ public class SetRank : ICommand
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {
         response = "Feature is Disabled.";
-        if (!Lobby.IsLobby)
+        if (!Main.IsLobby)
             return false;
 
         var player = ExPlayer.Get(sender);
@@ -414,7 +417,7 @@ public class Leaderboard : ICommand
 {
     public string Command => "Leaderboard";
     public string[] Aliases => ["baltop"];
-    public string Description => "Gets a leaderboard of the richest Site-12 personnel.";
+    public string Description => "Gets a leaderboard of the richest site personnel.";
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {
@@ -443,7 +446,7 @@ public class DepartmentHandler
 
     private static void Escaping(EscapingEventArgs ev)
     {
-        if (!Lobby.IsRoleplay)
+        if (!Main.IsRoleplay)
             return;
         ev.IsAllowed = false;
     }
@@ -452,7 +455,7 @@ public class DepartmentHandler
     {
         if (ev.Player.UserId.Contains("ID_Dummy"))
             return;
-        if (!Lobby.IsRoleplay) return;
+        if (!Main.IsRoleplay) return;
         if (ev.Reason is SpawnReason.None or SpawnReason.RoundStart) return;
         ev.Player.DisplayNickname = null;
         if (ev.Player.GameObject && ev.Player.ScomPlayer())

@@ -1,10 +1,11 @@
-﻿namespace Site12.API.Features.Items;
+﻿namespace GRPP.API.Features.Items;
 
 using System.Collections.Generic;
 using CustomItems;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Player;
+using GRPPCommands;
 using InventorySystem.Items;
 using MEC;
 using PlayerRoles;
@@ -19,13 +20,14 @@ public sealed class TaserHandler : CustomItemHandler
     public CustomItemContainer Container { get; } = new();
 
     public override string Name => "Taser";
-    public override string[] Alias => ["stun gun"];
+    public override string[] Alias => ["stun gun", "tase"]; // WOOO I'M SO GLAD THEY ADDED ALIASES TO THESE THANKS GANG
 
     public override void EnableEvents()
     {
         PlayerHandlers.Shot += Shot;
         PlayerHandlers.ReloadingWeapon += Reloading;
         PlayerHandlers.ChangingItem += ChangingItem;
+        PlayerHandlers.Hurting += Hurting;
     }
 
     public void ChangingItem(ChangingItemEventArgs ev)
@@ -51,7 +53,16 @@ public sealed class TaserHandler : CustomItemHandler
 
     public void Shot(ShotEventArgs ev)
     {
-        if (!HasItem(ev.Player.CurrentItem.Base))
+        if (ev.Target == null)
+            return;
+        if (ev.Player == null)
+            return;
+        var item = ev.Player.CurrentItem?.Base;
+
+        if (item == null)
+            return;
+
+        if (!HasItem(item))
             return;
         ev.CanHurt = false;
 
@@ -64,25 +75,53 @@ public sealed class TaserHandler : CustomItemHandler
             return;
 
         var chance = URandom.Range(0, 100);
+        // var chanceAlfred = URandom.Range(1, 2);
+        // var chanceSerious = URandom.Range(0, 1000);
 
-        if (chance == 1)
+        
+        // if (chanceAlfred == 1 && Lobby.IsRoleplay)
+        // {
+        //     ev.Target.EnableEffect(EffectType.CardiacArrest, 40f);
+        //     return;
+        // }
+        if (chance == 1 && TaserMod.TaserCardiac)
         {
             ev.Target.EnableEffect(EffectType.CardiacArrest, 10f);
             return;
         }
-
+        
         // I'm not gonna fucking do EnableEffects
+        // okay I see what stick was saying here. me neither. -z5
+        // came back to this with a lot more knowledge and i'm still not gonna attempt that -z5
         Timing.RunCoroutine(RotateFastLeftRight(ev.Target));
         ev.Target.EnableEffect(EffectType.Deafened, 255, 10f);
         ev.Target.EnableEffect(EffectType.AmnesiaItems, 255, 10f);
-        ev.Target.EnableEffect(EffectType.Blinded, 255, 30f);
+        ev.Target.EnableEffect(EffectType.Blurred, 50, 30f);
         ev.Target.EnableEffect(EffectType.Slowness, 20, 60f);
-        ev.Target.EnableEffect(EffectType.Ensnared, 255, 6f);
+        ev.Target.EnableEffect(EffectType.Ensnared, 255, 15f);
         ev.Target.EnableEffect<Exhausted>(40f);
     }
 
-    public IEnumerator<float> RotateFastLeftRight(ExPlayer player)
+    private void Hurting(HurtingEventArgs ev)
     {
+        if (ev.Attacker == null)
+            return;
+        if (ev.Player == null)
+            return;
+        
+        
+        if (ev.Attacker?.CurrentItem?.Base == null)
+            return;
+
+        if (!HasItem(ev.Attacker.CurrentItem.Base))
+            return;
+        ev.Amount = 10f;
+    }
+
+    private IEnumerator<float> RotateFastLeftRight(ExPlayer player)
+    {
+        if (!player.IsAlive || !player.IsConnected)
+            yield break;
         var elapsedTime = 0f;
         const float duration = 6f;
         const float interval = 0.085f; // Time between direction changes
@@ -118,8 +157,9 @@ public sealed class TaserHandler : CustomItemHandler
         var item = player.AddItem(ItemType.GunCOM15);
         var firearm = (Exiled.API.Features.Items.Firearm)item;
         firearm.ClearAttachments();
-        firearm.MaxMagazineAmmo = 1;
-        firearm.MagazineAmmo = 1;
+        firearm.MaxMagazineAmmo = 0;
+        firearm.MagazineAmmo = 0;
+        firearm.MaxBarrelAmmo = 1;
 
         Container.RegisterItem(item.Base);
         return item.Base; // so atm i think i can confirm at minimum THIS section is being called, but unsure of what else

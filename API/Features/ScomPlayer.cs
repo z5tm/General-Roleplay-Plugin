@@ -1,4 +1,4 @@
-﻿namespace Site12.API.Features;
+﻿namespace GRPP.API.Features;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,7 @@ using Dept = Department.Department;
 using CustomPlayerEffects;
 using Exiled.API.Features;
 using Extensions;
+using Lobby;
 using PlayerRoles;
 using NorthwoodLib.Pools;
 using PlayerRoles.PlayableScps.Scp173;
@@ -91,7 +92,7 @@ public class ScomPlayer : MonoBehaviour
     private bool _isBlinking;
     public IEnumerator<float> BlinkRoutine()
     {
-        if (!Lobby.IsRoleplay)
+        if (!Main.IsRoleplay)
             yield break;
         if (_isBlinking)
             yield break;

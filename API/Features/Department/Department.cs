@@ -1,10 +1,13 @@
-﻿namespace Site12.API.Features.Department;
+﻿namespace GRPP.API.Features.Department;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Attributes;
+using Core;
 using Exiled.API.Features;
+using Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using PlayerRoles;
@@ -14,33 +17,47 @@ public class Department
     public static Dictionary<string, DepartmentInfo> DepartmentsData = new();
 
     [OnPluginEnabled]
-    public static void Init()
+    public static async Task<bool> Init() // may fail since it has a return value, todo look into
     {
-        if (!Directory.Exists(Path.Combine(Paths.Plugins, "Site12")))
-            Directory.CreateDirectory(Path.Combine(Paths.Plugins, "Site12"));
-        foreach (var files in Directory.GetFiles(Path.Combine(Paths.Plugins, "Site12")))
+        if (Plugin.Singleton == null) return false;
+        
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP"));
+        foreach (var files in Directory.GetFiles(Path.Combine(Paths.Configs, "GRPP")))
         {
-            if (files == Path.Combine(Paths.Plugins, "Site12", "PlayerData.json"))
+            if (files == Path.Combine(Paths.Configs, "GRPP", "PlayerData.json"))
                 continue;
-            if (files == Path.Combine(Paths.Plugins, "Site12", "Shop.json"))
+            if (files == Path.Combine(Paths.Configs, "GRPP", "Shop.json"))
                 continue;
-            if (files == Path.Combine(Paths.Plugins, "Site12", "Users.json"))
+            if (files == Path.Combine(Paths.Configs, "GRPP", "Users.json"))
                 continue;
             var data = JsonConvert.DeserializeObject<DepartmentInfo>(File.ReadAllText(files));
-            DepartmentsData.Add(data.Department, data);
+            if (data?.Department != null)
+                DepartmentsData.Add(data.Department, data);
+            
+            var scaffolded = TypeScaffold.Scaffold(typeof(DepartmentInfo));
+            if (scaffolded == null)
+            {
+                Log.Error("Major internal error when attempting to write ItemConfig basic config. Please consult @z5tm to attempt to re-parse this.");
+                return false;
+            }
+            var example = JsonConvert.SerializeObject(scaffolded, Formatting.Indented);
+            var asyncz = new AsyncFileUtility();
+            await asyncz.WriteFileFromString(example, Path.Combine(Paths.Configs, "GRPP", "example.yml"), null);
         }
 
         foreach (var department in Plugin.Singleton.Config.Departments.Where(department => !DepartmentsData.ContainsKey(department))) CreateNewDepartment(department, []);
 
         if (!DepartmentsData.ContainsKey("Other"))
             CreateNewDepartment("Other", []);
+        return true;
     }
 
     public static List<RoleEntry> GetAllRoles(string department) => DepartmentsData.FirstOrDefault(departments => departments.Value.Department == department).Value.Roles;
 
     public static RoleEntry GetRole(string roleName, string department = null)
     {
-        if (department != null && DepartmentsData.TryGetValue(department, out var departmentInfo)) return departmentInfo.Roles.FirstOrDefault(entry => entry.RoleName == roleName);
+        if (/*department != null && */DepartmentsData.TryGetValue(department, out var departmentInfo)) return departmentInfo.Roles.FirstOrDefault(entry => entry.RoleName == roleName);
         return DepartmentsData.Select(departments => departments.Value.Roles.FirstOrDefault(entry => entry.RoleName == roleName)).FirstOrDefault(role => role != null);
     }
 
@@ -48,21 +65,21 @@ public class Department
 
     public static void UpdateDepartment(string name, DepartmentInfo departmentInfo)
     {
-        if (!File.Exists(Path.Combine(Paths.Plugins, "Site12", name + ".json")))
+        if (!File.Exists(Path.Combine(Paths.Configs, "GRPP", name + ".json")))
             return;
-
-        if (departmentInfo == null)
-            return;
+        
+        // if (departmentInfo == null)
+        //     return;
 
         if(DepartmentsData.ContainsKey(name))
             DepartmentsData[name] = departmentInfo;
 
-        File.WriteAllText(Path.Combine(Paths.Plugins, "Site12", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
+        File.WriteAllText(Path.Combine(Paths.Configs, "GRPP", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
     }
 
     public static DepartmentInfo CreateNewDepartment(string name, List<RoleEntry> roleEntries)
     {
-        if (File.Exists(Path.Combine(Paths.Plugins, "Site12", name + ".json")))
+        if (File.Exists(Path.Combine(Paths.Configs, "GRPP", name + ".json")))
             return null;
 
         var departmentInfo = new DepartmentInfo
@@ -74,7 +91,7 @@ public class Department
 
         DepartmentsData.Add(name, departmentInfo);
 
-        File.WriteAllText(Path.Combine(Paths.Plugins, "Site12", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
+        File.WriteAllText(Path.Combine(Paths.Configs, "GRPP", name + ".json"), JsonConvert.SerializeObject(departmentInfo, Formatting.Indented));
 
         return departmentInfo;
     }
@@ -82,28 +99,28 @@ public class Department
     public static void UpdateDepartmentData(string departmentName)
     {
         if(DepartmentsData.TryGetValue(departmentName, out var value))
-            File.WriteAllText(Path.Combine(Paths.Plugins, "Site12", departmentName + ".json"), JsonConvert.SerializeObject(value, Formatting.Indented));
+            File.WriteAllText(Path.Combine(Paths.Configs, "GRPP", departmentName + ".json"), JsonConvert.SerializeObject(value, Formatting.Indented));
     }
 }
 
 public class DepartmentInfo
 {
-    public string Department { get; init; }
+    public string? Department { get; init; }
     public float Balance { get; set; }
-    public List<RoleEntry> Roles { get; set; }
+    public List<RoleEntry>? Roles { get; set; }
 }
 
 public class RoleEntry
 {
-    public string RoleName { get; set; }
-    public RoleDetails Role { get; set; }
+    public string? RoleName { get; set; }
+    public RoleDetails? Role { get; set; }
 }
 
 public class RoleDetails
 {
-    public string Prefix { get; set; }
-    public string CustomI { get; set; }
-    public string Description { get; set; }
+    public string? Prefix { get; set; }
+    public string? CustomI { get; set; }
+    public string? Description { get; set; }
     public Dictionary<string, RankDetails> Ranks { get; set; }
 }
 
@@ -115,13 +132,13 @@ public class RankDetails
     public RoleTypeId RoleTypeID { get; set; }
     public bool Default { get; set; }
     public bool HasPda { get; set; }
-    public List<LoadOutItem> LoadOut { get; set; }
+    public List<LoadOutItem>? LoadOut { get; set; }
     public float AmountPaidPerRP { get; set; }
 }
 
 public class LoadOutItem
 {
-    public string ItemType { get; set; } // The type of the item (e.g., KeycardJanitor, GunCOM15)
+    public string? ItemType { get; set; } // The type of the item (e.g., KeycardJanitor, GunCOM15)
     public int? Level { get; set; } // Optional level for keycards (null for non-keycards)
-    public List<string> Permissions { get; set; } // Permissions for keycards (null or empty for non-keycards)
+    public List<string>? Permissions { get; set; } // Permissions for keycards (null or empty for non-keycards)
 }

@@ -1,4 +1,4 @@
-namespace Site12.API.Features;
+namespace GRPP.API.Features;
 
 using System;
 using System.Collections.Generic;
@@ -19,24 +19,41 @@ public class Audio : ICommand
 
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, [UnscopedRef] out string response)
     {
+        if (!sender.CheckRemoteAdmin(out response) && !Plugin.Singleton.Config.ClientAu)
+            return false;
+        
         var player = ExPlayer.Get(sender);
         response = "<color=red>No Permission.";
-        if (!sender.CheckPermission("site12.au"))
+        if (!sender.CheckPermission("grpp.au"))
             return false;
 
         response = "<color=red>Invalid Usage\n" +
                    "<color=yellow>> Play {ID} {Loop?} {Local?} {SoundName}\n" +
                    "<color=yellow>> Stop {ID}";
 
-        if (!Directory.Exists(Path.Combine(Paths.Plugins, "audio")))
-            Directory.CreateDirectory(Path.Combine(Paths.Plugins, "audio"));
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP"));
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP", "audio")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP", "audio"));
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP", "audio", "PluginSFX")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP", "audio", "PluginSFX"));
 
-        if (arguments.Count == 0)
+        try
         {
-            foreach (var file in Directory.GetFiles(Path.Combine(Paths.Plugins, "audio"), "*.ogg", SearchOption.AllDirectories)) sender.Respond($"<color=green>> {file.Replace(".ogg", "").Replace(Path.Combine(Paths.Plugins, "audio") + "/", "")}");
+            if (arguments.Count == 0)
+            {
+                foreach (var file in Directory.GetFiles(Path.Combine(Paths.Configs, "GRPP", "audio"), "*.ogg",
+                             SearchOption.AllDirectories))
+                    sender.Respond(
+                        $"<color=green>> {file.Replace(".ogg", "").Replace(Path.Combine(Paths.Configs, "GRPP", "audio") + "\\", "")}");
 
-            response = $"{response}\n<color=green>> Task Completed";
-            return true;
+                response = $"{response}\n<color=green>> Task Completed";
+                return true;
+            }
+        }
+        catch(Exception e)
+        {
+            Log.Info($"The directory at `GRPP\\audio\\` is likely empty. {e.Message}");
         }
 
         response = arguments.At(0).ToLower() switch
@@ -75,27 +92,39 @@ public class Audio : ICommand
 
         var offset = new ArraySegment<string>(arguments.Array!, arguments.Offset + 4, arguments.Count - 4);
         var audioToPlay = string.Join(" ", offset);
-
-        foreach (var file in Directory.GetFiles(Path.Combine(Paths.Plugins, "audio"), "*.ogg", SearchOption.AllDirectories))
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP"));
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP", "audio")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP", "audio"));
+        if (!Directory.Exists(Path.Combine(Paths.Configs, "GRPP", "audio", "PluginSFX")))
+            Directory.CreateDirectory(Path.Combine(Paths.Configs, "GRPP", "audio", "PluginSFX"));
+        try 
         {
-            var fileName = file.Replace(".ogg", "").Replace(Path.Combine(Paths.Plugins, "audio") + "/", "");
-            if (fileName != audioToPlay) continue;
-            AudioClipStorage.LoadClip(file, fileName);
-            var audioPlayer = AudioPlayer.Create($"AudioPlayer {controllerId}", controllerId: controllerId);
-            var speaker = audioPlayer.AddSpeaker("Speaker", player.Position, isSpatial: isSpatial, maxDistance: isSpatial ? 15f : 8000);
+            foreach (var file in Directory.GetFiles(Path.Combine(Paths.Configs, "GRPP", "audio"), "*.ogg", SearchOption.AllDirectories)) 
+            {
+                var fileName = file.Replace(".ogg", "").Replace(Path.Combine(Paths.Configs, "GRPP", "audio") + "\\", "");
+                if (fileName != audioToPlay) continue;
+                AudioClipStorage.LoadClip(file, fileName);
+                var audioPlayer = AudioPlayer.Create($"AudioPlayer {controllerId}", controllerId: controllerId);
+                var speaker = audioPlayer.AddSpeaker("Speaker", player.Position, isSpatial: isSpatial, maxDistance: isSpatial ? 15f : 8000);
 
-            var clip = audioPlayer.AddClip(fileName, loop: isLoop);
-            _audioPlayerIds.Add(controllerId);
+                var clip = audioPlayer.AddClip(fileName, loop: isLoop);
+                _audioPlayerIds.Add(controllerId);
 
-            if (!isLoop)
-                Timing.CallDelayed((float)clip.Duration.TotalSeconds, () =>
-                {
-                    _audioPlayerIds.Remove(controllerId);
-                    audioPlayer.Destroy();
-                    speaker.Destroy();
-                });
+                if (!isLoop)
+                    Timing.CallDelayed((float)clip.Duration.TotalSeconds, () =>
+                    {
+                        _audioPlayerIds.Remove(controllerId);
+                        audioPlayer.Destroy();
+                        speaker.Destroy();
+                    });
 
-            return $"<color=green>Now playing as {controllerId} audioFile: {fileName}";
+                return $"<color=green>Now playing as {controllerId} audioFile: {fileName}";
+            }
+        }
+        catch(Exception e)
+        {
+            Log.Info($"The directory at `GRPP\\audio\\` is likely empty. {e.Message}");
         }
 
         return $"<color=red>Attempted to play {audioToPlay}, but no audio was found.\nIf you believe this is an issue please talk to @sticksdev.";

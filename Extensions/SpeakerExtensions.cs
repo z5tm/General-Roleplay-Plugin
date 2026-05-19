@@ -1,9 +1,6 @@
-namespace Site12.Extensions;
+namespace GRPP.Extensions;
 
 using System.Collections.Generic;
-using AdminToys;
-using Exiled.API.Enums;
-using Exiled.API.Features.Toys;
 
 public static class SpeakerExtensions
 {

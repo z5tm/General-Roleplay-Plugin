@@ -1,19 +1,22 @@
-namespace Site12.API.Features.Menus;
+namespace GRPP.API.Features.Menus;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Department;
 using Exiled.API.Features;
 using Extensions;
+using Lobby;
 using MEC;
 using PlayerRoles;
 using UserSettings.ServerSpecific;
+using Vector3 = UnityEngine.Vector3;
 
 /// <summary>
 /// This example shows an ability to organize longer lists of entries by introducing a page selector.
 /// <para /> This example uses auto-generated IDs, since it doesn't provide additional functionality, and reliability of saving isn't important here.
 /// </summary>
-public class Site12Menu
+public class GRPPMenu
 {
     private static Dictionary<int, Role> RolesToId = [];
 
@@ -73,6 +76,7 @@ public class Site12Menu
         // We're technically sending ALL settings here, but clients will immediately send back the response which will allow us to re-send only the portion they're interested in.
         // You can optimize this process by only sending the page selector, but I didn't want to complicate this example more than it needs to.
         ServerSpecificSettingsSync.SendToAll();
+        // ServerSpecificSettingsSync.SendToPlayer(); // yeah okay i'll touch this when i'm less dumb
     }
 
     private HashSet<ReferenceHub> _activated = [];
@@ -138,9 +142,9 @@ public class Site12Menu
                 var player = ExPlayer.Get(hub);
                 var setRole = Department.GetRole(role.RoleName, role.Department);
 
-                if (!Lobby.IsRoleplay && !player.IsBypassModeEnabled)
+                if (!Main.IsRoleplay && !player.IsBypassModeEnabled)
                     break;
-                if (!Lobby.IsLobby && !player.IsBypassModeEnabled)
+                if (!Main.IsLobby && !player.IsBypassModeEnabled)
                     break;
 
                 if (setRole == player.ScomPlayer().CurrentRole.RoleEntry)
@@ -179,7 +183,8 @@ public class Site12Menu
                     if (!player.SetRole(role.RoleName, role.Department, RoleSpawnFlags.AssignInventory))
                         break;
 
-                    Timing.CallDelayed(0.25f, () => player.Position = Plugin.Singleton.Config.PlayerSpawnLocation);
+                    if(Plugin.Singleton.Config.PlayerSpawnLocationX == 0f &&  Plugin.Singleton.Config.PlayerSpawnLocationY == 0f &&  Plugin.Singleton.Config.PlayerSpawnLocationZ == 0f)
+                        Timing.CallDelayed(0.25f, () => player.Position = new(Plugin.Singleton.Config.PlayerSpawnLocationX,  Plugin.Singleton.Config.PlayerSpawnLocationY, Plugin.Singleton.Config.PlayerSpawnLocationZ));
                 }
 
                 player.ShowHint("<size=16>" + setRole.Role.Description, 10f);
