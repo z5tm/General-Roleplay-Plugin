@@ -1,8 +1,10 @@
-﻿using System;
-using System.Linq;
-using CommandSystem;
+﻿using CommandSystem;
 using Exiled.API.Features;
 using GRPP;
+using GRPP.API.Core.Webhooks;
+using InventorySystem.Items;
+using System;
+using System.Linq;
 
 [CommandHandler(typeof(ClientCommandHandler))]
 public class RPConsole : ICommand
@@ -28,7 +30,9 @@ public class RPConsole : ICommand
 	{
 		//rp [duration] [message]
 
-		if (arguments.Count == 0 || arguments.Count == 1)
+        var player = Player.Get(sender);
+
+        if (arguments.Count == 0 || arguments.Count == 1)
 		{
 			response = "Usage: .rp [message]";
 			return false;
@@ -42,6 +46,16 @@ public class RPConsole : ICommand
 
 		string message = string.Join(" ", arguments.Skip(1).ToArray());
 		RoomBroadcast(Player.Get(sender), duration, message);
+
+        if (!Plugin.Singleton.Config.RPCommandWebhookUrl.IsEmpty())
+            _ = AsyncWebhookHandler.LogMessage(
+                webhookNameToUse: "RPLogger",
+                webhookUrl: Plugin.Singleton.Config.RPCommandWebhookUrl,
+                title: "Roleplay Message",
+                description: $"A user has sent a roleplay message.\nName: \"{player.DisplayNickname}\"\nSteamID64: \"{player.UserId}\"\nMessage: \"{message}\"",
+                color: "880808");
+
+
         response = "Roleplay message successfully sent!";
 		return true;
     }

@@ -120,4 +120,5 @@ public class Config : IConfig
     [Description("Maximum amount of characters allowed in the Print client command.")] public int? MaximumCreateDescription { get; set; } = 50;
 
     [Description("Client-sided print command webhook logging URL.")] public string PrintCommandWebhookUrl { get; set; } = string.Empty;
+    [Description("Client-sided roleplay command webhook logging URL.")] public string RPCommandWebhookUrl { get; set; } = string.Empty;
 }
