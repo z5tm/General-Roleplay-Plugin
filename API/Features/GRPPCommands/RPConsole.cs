@@ -37,7 +37,7 @@ public class RPConsole : ICommand
             
             if (target.CurrentRoom.Zone is ZoneType.Surface or ZoneType.Unspecified &&
                 Vector3.Distance(position, target.Position) <= Plugin.Singleton.Config.RPCommandBroadcastRange || target.CurrentRoom == currentRoom)
-                target.Broadcast(Plugin.Singleton.Config.RPBroadcastDuration, $"{broadcastSender.CustomName} says: " + message);
+                target.Broadcast(Plugin.Singleton.Config.RPCommandBroadcastDuration, $"{broadcastSender.CustomName} says: " + message);
         }
         
         Log.Debug("Roleplay message sent by " + broadcastSender.DisplayNickname + " in " + currentRoom.Name + " with message: " + message);
