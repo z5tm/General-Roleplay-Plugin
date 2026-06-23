@@ -36,14 +36,17 @@ public class Config : IConfig
     public float PlayerSpawnLocationX { get; set; } = 0f;
     public float PlayerSpawnLocationY { get; set; } = 0f;
     public float PlayerSpawnLocationZ { get; set; } = 0f;
-    [Description("Maximum length for names, when changed using `.name`.")] public int? NameMaxLength = 25;
-    [Description("Maximum length for customis, when changed using `.info`.")] public int? InfoMaxLength = 50;
+    [Description("Maximum length for names, when changed using `.name`.")] public int? NameMaxLength = 75;
+    [Description("Maximum length for customis, when changed using `.info`.")] public int? InfoMaxLength = 150;
 
     [Description("List of Departments, i.e. Security, Research")]
     public List<string> Departments { get; set; } = [
     "SetMeUp1",
     "SetMeUpNow"
     ]; // need to make this shit more user-friendly. I shall soon.
+
+    [Description("Amount of time in seconds that the broadcast sent by the .rp command lasts.")]
+    public ushort RPBroadcastDuration { get; set; } = 15; 
 
     [Description("Scom Word blocklist")]
     public List<string> Blocklist { get; set; } = ["horridword", "badwordbadd", "badword67"];
@@ -116,5 +119,10 @@ public class Config : IConfig
     [Description("Permits non-RA users to use `.print` to create janitoral keycards with information on them. Even if enabled in config, this must be enabled through RA with `printon`.")] public bool AllowClientCreateCommand { get; set; } = false;
     [Description("Maximum amount of characters allowed in the Print client command.")] public int? MaximumCreateDescription { get; set; } = 50;
 
+    [Description("Amount of time that the .rp command's broadcast lasts, in seconds.")] public ushort RPCommandBroadcastDuration { get; set; } = 10;
+    [Description("Range that the .rp command's broadcast reaches if it is on surface or in an unspecified zone, in units.")] public float RPCommandBroadcastRange { get; set; } = 25f;
+
     [Description("Client-sided print command webhook logging URL.")] public string PrintCommandWebhookUrl { get; set; } = string.Empty;
-}
+    [Description("Client-sided roleplay command webhook logging URL.")] public string RPCommandWebhookUrl { get; set; } = string.Empty;
+    [Description("Client-sided modmail command webhook logging URL.")] public string ModmailCommandWebhookUrl { get; set; } = string.Empty;
+};
