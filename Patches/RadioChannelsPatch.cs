@@ -1,6 +1,6 @@
 ﻿namespace GRPP.Patches;
 
- using System;
+using System;
 using API.Attributes;
 using Exiled.Events.EventArgs.Player;
 using HarmonyLib;
@@ -11,6 +11,8 @@ using Exiled.API.Features;
 using Mirror;
 using VoiceChat;
 using VoiceChat.Networking;
+
+// Yes, this is a modified version of my radio channels plugin code in https://github.com/Mrhootyhoot1/RadioChannels. I, hooty, own this repository and put this code here myself.
 
 [HarmonyPatch(typeof(VoiceTransceiver), nameof(VoiceTransceiver.ServerReceiveMessage))]
     public static class RadioChannelsPatch
