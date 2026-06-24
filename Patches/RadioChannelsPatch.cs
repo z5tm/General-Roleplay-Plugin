@@ -89,6 +89,7 @@ using VoiceChat.Networking;
 
 	            matcher.Start();
 	            matcher.MatchEndForward(
+			            new CodeMatch(OpCodes.Callvirt),
 			            new CodeMatch(OpCodes.Ldloca_S),
 			            new CodeMatch(OpCodes.Call)
 		            )
