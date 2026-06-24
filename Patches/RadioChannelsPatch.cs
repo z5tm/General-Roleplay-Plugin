@@ -80,7 +80,6 @@ using VoiceChat.Networking;
                     new CodeInstruction(OpCodes.Ldarga, 1), //load the address of the voice message
                     new CodeInstruction(OpCodes.Ldc_I4, (int)VoiceChatChannel.Proximity), //load the prox chat voice channel
                     new CodeInstruction(OpCodes.Stfld, voiceMessageChannel), //change the voice channel to prox chat
-                    new CodeInstruction(OpCodes.Ldloc, messageModified.LocalIndex), //load the messageModified local
                     new CodeInstruction(OpCodes.Ldc_I4_1), //load 1 (true)
                     new CodeInstruction(OpCodes.Stloc, messageModified.LocalIndex), //save messageModified
                     
@@ -97,9 +96,11 @@ using VoiceChat.Networking;
 			            new CodeInstruction(OpCodes.Ldloc, messageModified.LocalIndex), //load message modified
 			            new CodeInstruction(OpCodes.Brfalse_S, continueFromRevert), //if it's not continue
 			            new CodeInstruction(OpCodes.Ldarga, 1), //load the voice message address
-			            new CodeInstruction(OpCodes.Ldc_I4_0, (int)VoiceChatChannel.Radio), //change it back to radio 
+			            new CodeInstruction(OpCodes.Ldc_I4, (int)VoiceChatChannel.Radio), //change it back to radio 
 			            new CodeInstruction(OpCodes.Stfld, voiceMessageChannel), //store it back
-			            
+			            new CodeInstruction(OpCodes.Ldc_I4_0),
+			            new CodeInstruction(OpCodes.Stloc, messageModified.LocalIndex),
+				            
 			            new CodeInstruction(OpCodes.Nop).WithLabels(continueFromRevert) //continue
 		            );
             }
