@@ -28,7 +28,7 @@ using Log = Exiled.API.Features.Log;
 public sealed class Plugin : Plugin<Config>
 {
     public override string Name => "grpp"; // General Roleplay Plugin
-    public override string Author => "z5tm & Site-12 Development Team"; // Thank you Stick and VisLuke [i have now been informed that there were many more. thanks y'all :fire:]
+    public override string Author => "z5tm, Site-12 Development Team, Site-27 Development Team, and Contributors"; // Thank you Stick and VisLuke [i have now been informed that there were many more. thanks y'all :fire:]
     public override Version Version => new(1, 4, 4);
     public static Plugin Singleton => _singleton ?? throw new InvalidOperationException("Plugin is not initialized!");
     private Harmony? _harmony;

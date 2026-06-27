@@ -1,194 +1,210 @@
-﻿ namespace GRPP.Patches;
+﻿namespace GRPP.Patches;
 
+using System;
 using API.Attributes;
 using Exiled.Events.EventArgs.Player;
-using Extensions;
 using HarmonyLib;
-using Hints;
-using PlayerRoles;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
-using UnityEngine;
+using Exiled.API.Features;
+using Mirror;
 using VoiceChat;
 using VoiceChat.Networking;
-using static HarmonyLib.AccessTools;
 
-// Todo: Update this for 14.1
-// /// <summary>
-// /// Allows the usage of radio channels for radios when using the on/off toggle key.
-// /// </summary>
- //// I am not ready for harmony patches -Z5 
-// [HarmonyPatch]
-// public static class RadioChannelsPatch
-// {
-//     static RadioChannelsPatch()
-//     {
-//         PlayerRadioChannel = new();
-//
-//         HintMessage = new()
-//         {
-//             DurationScalar = 3f,
-//             Parameters =
-//             [
-//                 HintMessageParameter = new StringHintParameter()
-//             ],
-//             _effects =
-//             [
-//                 new AlphaCurveHintEffect(AnimationCurve.Linear(0, 1, 1, 1))
-//             ]
-//         };
-//
-//         RadioChannels = [
-//             "446 MHz - Facility Personnel",
-//             "236 MHz - Security Personnel",
-//             "594 MHz - Mobile Task Force Operations",
-//             "401 MHz - Administrative Channel",
-//             "??? MHz - Unauthorized Frequency",
-//             "901 Mhz - Class-D Communications",
-//             "022 MHz - Site Command",
-//             "412 MHz - Research Comms"
-//         ];
-//     }
-//
-//     public static readonly Dictionary<ReferenceHub, int> PlayerRadioChannel;
-//
-//     public static int MaxChannels => RadioChannels.Length;
-//
-//     /// <summary>
-//     /// The channel names that are accessible to users.
-//     /// </summary>
-//     /// <remarks>There must always be atleast one channel to prevent errors.</remarks>
-//     public static readonly string[] RadioChannels;
-//
-//     private static readonly TextHint HintMessage;
-//
-//     private static readonly StringHintParameter HintMessageParameter;
-//
-//     [OnPluginEnabled]
-//     internal static void InitEvents()
-//     {
-//         ServerHandlers.WaitingForPlayers += PlayerRadioChannel.Clear;
-//         PlayerHandlers.TogglingRadio += OnTogglingRadio;
-//     }
-//
-//     private static void OnTogglingRadio(TogglingRadioEventArgs ev)
-//     {
-//         if (ev.NewState) // Set to first channel when enabling radio.
-//         {
-//             ShowHintText(ev.Player, $"<b>RADIO CHANNEL: {RadioChannels[0]}</b>");
-//
-//             PlayerRadioChannel[ev.Player.ReferenceHub] = 0;
-//             ev.IsAllowed = true;
-//             return;
-//         }
-//
-//         GetRadioChannel(ev.Player.ReferenceHub, out var channel);
-//         channel = GetNextChannel(channel);
-//         if (channel == 4 && ev.Player.Role.Team == Team.ChaosInsurgency)
-//             channel = GetNextChannel(channel);
-//
-//         if (channel == -1) // Turning off radio.
-//         {
-//             ShowHintText(ev.Player, "<b><color=#FF0000>RADIO OFF</color></b>");
-//
-//             PlayerRadioChannel[ev.Player.ReferenceHub] = -1;
-//             ev.IsAllowed = true;
-//             return;
-//         }
-//
-//         // Cycling to next channel.
-//         ShowHintText(ev.Player, $"<b>RADIO CHANNEL: {RadioChannels[channel]}</b>");
-//
-//         PlayerRadioChannel[ev.Player.ReferenceHub] = channel;
-//         ev.IsAllowed = false;
-//     }
-//
-//     [HarmonyTranspiler]
-//     [HarmonyPatch(typeof(VoiceTransceiver), nameof(VoiceTransceiver.ServerReceiveMessage))]
-//     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-//     {
-//         instructions.BeginTranspiler(out List<CodeInstruction> newInstructions);
-//
-//         // VoiceChatChannel voiceChatChannel2 = voiceRole2.VoiceModule.ValidateReceive(msg.Speaker, voiceChatChannel);
-//         //
-//         // <------- Patch goes here.
-//         //
-//         // if (voiceChatChannel2 != 0)
-//         // {
-//         //     msg.Channel = voiceChatChannel2;
-//         //     allHub.connectionToClient.Send(msg);
-//         // }
-//         int index = newInstructions.FindLastIndex(x => x.opcode == OpCodes.Stloc_S && x.operand is LocalBuilder local && local.LocalIndex == 5);
-//
-//         // RadioChannelsPatch.OnTransceiving(ref VoiceMessage msg, ref VoiceChatChannel voiceChatChannel2, hub);
-//         newInstructions.InsertRange(index + 1, new CodeInstruction[]
-//         {
-//             // ref VoiceMessage msg
-//             new(OpCodes.Ldarga_S, 1),
-//
-//             // ref VoiceChatChannel voiceChatChannel2
-//             new(OpCodes.Ldloca_S, 5),
-//
-//             // ReferenceHub hub
-//             new(OpCodes.Ldloc_S, 3),
-//
-//             // RadioChannelsPatch.OnTransceiving(ref VoiceMessage msg, ref VoiceChatChannel voiceChatChannel2, hub);
-//             new(OpCodes.Call, Method(typeof(RadioChannelsPatch), nameof(OnTransceiving))),
-//         });
-//
-//         return newInstructions.FinishTranspiler();
-//     }
-//
-//     private static void ShowHintText(ExPlayer player, string value)
-//     {
-//         HintMessage.Text = value;
-//         HintMessageParameter.Value = value;
-//         player.ReferenceHub.hints.Show(HintMessage);
-//     }
-//
-//     private static void OnTransceiving(ref VoiceMessage msg, ref VoiceChatChannel channel, ReferenceHub recv)
-//     {
-//         if (channel != VoiceChatChannel.Radio)
-//             return;
-//
-//         if (recv.roleManager.CurrentRole.Team == Team.SCPs)
-//             return;
-//
-//         if (recv.roleManager.CurrentRole.Team == Team.Dead)
-//             return;
-//
-//         GetRadioChannel(recv, out int recvChannel);
-//         GetRadioChannel(msg.Speaker, out int speakerChannel);
-//
-//         if (recvChannel == -1 || speakerChannel == -1 || recvChannel != speakerChannel)
-//         {
-//             channel = VoiceChatChannel.None;
-//         }
-//     }
-//
-//     private static bool GetRadioChannel(ReferenceHub hub, out int channel)
-//     {
-//         if (!PlayerRadioChannel.TryGetValue(hub, out channel))
-//         {
-//             PlayerRadioChannel.Add(hub, channel = 0);
-//         }
-//
-//         channel = Mathf.Clamp(channel, 0, MaxChannels - 1);
-//         return true;
-//     }
-//
-//     private static int GetNextChannel(int channel)
-//     {
-//         channel = Mathf.Clamp(channel, -1, MaxChannels - 1);
-//
-//         if (channel == -1)
-//             return 0;
-//
-//         if (++channel == MaxChannels)
-//         {
-//             return -1;
-//         }
-//
-//         return channel;
-//     }
-// }
+// Yes, this is a modified version of my radio channels plugin code in https://github.com/Mrhootyhoot1/RadioChannels. I, hooty, own this repository and put this code here myself.
+
+[HarmonyPatch(typeof(VoiceTransceiver), nameof(VoiceTransceiver.ServerReceiveMessage))]
+    public static class RadioChannelsPatch
+    {
+        [HarmonyTranspiler]
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            MethodInfo canReceiveMessage = AccessTools.Method(
+	            typeof(RadioChannelsPatch), 
+	            nameof(RadioChannelsPatch.CanReceiveMessage), 
+	            new [] { typeof(NetworkConnection), typeof(ReferenceHub) }
+	        );
+            
+            MethodInfo usingRadioChannel = AccessTools.Method(
+                typeof(RadioChannelsPatch), 
+                nameof(UsingRadio), 
+                new Type[] { typeof(VoiceMessage) }
+            );
+            
+            MethodInfo usingProximityChat = AccessTools.Method(
+                typeof(RadioChannelsPatch), 
+                nameof(UsingProximityChat), 
+                new Type[] { typeof(VoiceMessage) }
+            );
+            
+            FieldInfo voiceMessageChannel = AccessTools.Field(typeof(VoiceMessage), nameof(VoiceMessage.Channel));
+            
+            Label retLabel = generator.DefineLabel();
+            Label continueLabel = generator.DefineLabel();
+            Label continueFromRevert = generator.DefineLabel();
+            LocalBuilder messageModified = generator.DeclareLocal(typeof(bool));
+
+            CodeMatcher matcher = new CodeMatcher(instructions);
+            matcher.Start();
+            CodeInstruction ret = matcher.MatchEndForward(new CodeMatch(OpCodes.Ret)).Instruction; 
+            ret.labels.Add(retLabel); 
+            
+            matcher.Start();
+
+            if (Plugin.Singleton.Config.RadioChannelsEnabled)
+            {
+	            matcher = matcher.MatchEndForward(
+                    new CodeMatch(OpCodes.Callvirt),
+                    new CodeMatch(OpCodes.Ldobj),
+                    new CodeMatch(OpCodes.Starg_S),
+                    new CodeMatch(OpCodes.Ldarg_1),
+                    new CodeMatch(i =>
+                        i.opcode == OpCodes.Ldfld &&
+                        ((FieldInfo)i.operand).FieldType == typeof(VoiceChatChannel)), 
+                    new CodeMatch(OpCodes.Brfalse_S)
+                )
+                .Insert(
+                    new CodeInstruction(OpCodes.Ldarg_1), //load the voice message to the stack.
+                    new CodeInstruction(OpCodes.Call, usingProximityChat), //check if the message is proximity chat.
+                    new CodeInstruction(OpCodes.Brtrue_S, continueLabel), //if the message is proximity chat, skip the rest of the inserted code.
+                    new CodeInstruction(OpCodes.Ldarg_1), //load the voice message to the stack again.
+                    new CodeInstruction(OpCodes.Call, usingRadioChannel), //check if the voice message is using radio channels
+                    new CodeInstruction(OpCodes.Brfalse_S, continueLabel), //if it is, jump to the callSendMessage label.
+                    
+                    new CodeInstruction(OpCodes.Ldarg_0), //load the network connection that sent the message
+                    new CodeInstruction(OpCodes.Ldloc_S, 4), //load the current referencehub
+                    new CodeInstruction(OpCodes.Call, canReceiveMessage), //check if the player can receive your message 
+                    new CodeInstruction(OpCodes.Brtrue, continueLabel), //if they cannot, send a proximity thing
+                    
+                    new CodeInstruction(OpCodes.Ldarga, 1), //load the address of the voice message
+                    new CodeInstruction(OpCodes.Ldc_I4, (int)VoiceChatChannel.Proximity), //load the prox chat voice channel
+                    new CodeInstruction(OpCodes.Stfld, voiceMessageChannel), //change the voice channel to prox chat
+                    new CodeInstruction(OpCodes.Ldc_I4_1), //load 1 (true)
+                    new CodeInstruction(OpCodes.Stloc, messageModified.LocalIndex), //save messageModified
+                    
+                    new CodeInstruction(OpCodes.Nop).WithLabels(continueLabel) 
+                );
+
+	            matcher.Start();
+	            matcher.MatchEndForward(
+			            new CodeMatch(OpCodes.Callvirt),
+			            new CodeMatch(OpCodes.Ldloca_S),
+			            new CodeMatch(OpCodes.Call)
+		            )
+		            .Insert(
+			            new CodeInstruction(OpCodes.Ldloc, messageModified.LocalIndex), //load message modified
+			            new CodeInstruction(OpCodes.Brfalse_S, continueFromRevert), //if it's not continue
+			            new CodeInstruction(OpCodes.Ldarga, 1), //load the voice message address
+			            new CodeInstruction(OpCodes.Ldc_I4, (int)VoiceChatChannel.Radio), //change it back to radio 
+			            new CodeInstruction(OpCodes.Stfld, voiceMessageChannel), //store it back
+			            new CodeInstruction(OpCodes.Ldc_I4_0),
+			            new CodeInstruction(OpCodes.Stloc, messageModified.LocalIndex),
+				            
+			            new CodeInstruction(OpCodes.Nop).WithLabels(continueFromRevert) //continue
+		            );
+            }
+            
+            foreach (var instruction in matcher.InstructionEnumeration())
+            {
+                yield return instruction; 
+            }
+        }
+
+        static bool CanReceiveMessage(NetworkConnection senderConnection, ReferenceHub recipient)
+        {
+            Player playerSender = Player.Get(senderConnection);
+            Player playerRecipient = Player.Get(recipient);
+            
+            if (playerRecipient.IsNPC)
+            {
+                return false;
+            }
+            
+            string senderChannel = RadioChannelHandler.GetPlayerRadioChannel(playerSender);
+            string recipientChannel = RadioChannelHandler.GetPlayerRadioChannel(playerRecipient);
+            
+            if (senderChannel == recipientChannel)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        static bool UsingRadio(VoiceMessage message)
+        {            
+            return message.Channel == VoiceChatChannel.Radio;
+        }
+
+        static bool UsingProximityChat(VoiceMessage message)
+        {
+            return message.Channel == VoiceChatChannel.Proximity;
+        }
+    }
+
+    public static class RadioChannelHandler
+    {
+        private static Dictionary<Player, string> _playerChannels = new Dictionary<Player, string>();
+
+        [OnPluginEnabled]
+        public static void SubscribeEvents()
+        {
+	        if (Plugin.Singleton.Config.RadioChannelsEnabled)
+	        {
+		        Exiled.Events.Handlers.Player.Verified += OnPlayerJoined;
+		        Exiled.Events.Handlers.Player.TogglingRadio += OnTogglingRadio;
+		        Exiled.Events.Handlers.Player.Left += OnPlayerLeft;
+	        }
+        }
+
+        static void OnTogglingRadio(TogglingRadioEventArgs ev)
+        {
+            string channel = GetPlayerRadioChannel(ev.Player);
+            string newChannel = Plugin.Singleton.Config.Channels[(Plugin.Singleton.Config.Channels.IndexOf(channel) + 1) % Plugin.Singleton.Config.Channels.Length];
+            
+            if (ev.NewState)
+            {
+                ev.IsAllowed = true;
+                SetPlayerRadioChannel(ev.Player, Plugin.Singleton.Config.Channels[0]);
+                ev.Player.ShowHint(Plugin.Singleton.Config.Channels[0]);
+                return;
+            }
+            if (newChannel.ToLower() == "off" && Plugin.Singleton.Config.OffChannelEnabled)
+            {
+                ev.IsAllowed = true;
+                ev.Player.ShowHint("<color=red> Radio Off </color>");
+                SetPlayerRadioChannel(ev.Player, "off");
+                return;
+            }
+            ev.IsAllowed = false;
+            SetPlayerRadioChannel(ev.Player, newChannel);
+            ev.Player.ShowHint(newChannel);
+        }
+           
+        static void OnPlayerJoined(VerifiedEventArgs ev)
+        {
+            _playerChannels.Add(ev.Player, Plugin.Singleton.Config.Channels[0]);
+        }
+
+        static void OnPlayerLeft(LeftEventArgs ev)
+        {
+            if (_playerChannels.ContainsKey(ev.Player))
+            {
+                _playerChannels.Remove(ev.Player);
+            }
+        }
+        
+        public static string GetPlayerRadioChannel(Player player)
+        {
+            if (!_playerChannels.ContainsKey(player))
+            {
+                _playerChannels.Add(player, Plugin.Singleton.Config.Channels[0]);
+            }
+            return _playerChannels[player];
+        }
+
+        public static void SetPlayerRadioChannel(ExPlayer player, string radioChannel)
+        {
+            _playerChannels[player] = radioChannel;
+        }
+    }
