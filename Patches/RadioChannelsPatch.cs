@@ -149,9 +149,12 @@ using VoiceChat.Networking;
         [OnPluginEnabled]
         public static void SubscribeEvents()
         {
-            Exiled.Events.Handlers.Player.Verified += OnPlayerJoined;
-            Exiled.Events.Handlers.Player.TogglingRadio += OnTogglingRadio;
-            Exiled.Events.Handlers.Player.Left += OnPlayerLeft;
+	        if (Plugin.Singleton.Config.RadioChannelsEnabled)
+	        {
+		        Exiled.Events.Handlers.Player.Verified += OnPlayerJoined;
+		        Exiled.Events.Handlers.Player.TogglingRadio += OnTogglingRadio;
+		        Exiled.Events.Handlers.Player.Left += OnPlayerLeft;
+	        }
         }
 
         static void OnTogglingRadio(TogglingRadioEventArgs ev)
