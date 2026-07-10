@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using System.Diagnostics.Contracts;
 using System.Text.RegularExpressions;
+using API.Core;
 using Exiled.API.Features;
 
 public static class StringExtensions
@@ -43,6 +44,18 @@ public static class StringExtensions
             if (!string.IsNullOrEmpty(inputString)) return inputString.Length <= cutLength ? inputString : inputString.AsSpan(0, cutLength).ToString();
             Log.Error("Error when attempting to cut string. String was null or empty.");
             return string.Empty; // if string is null or empty, return nothing.
+        }
+        
+        public ExPlayer? GetPlayer()
+        {
+            ExPlayer? playerToGiveCard;
+            
+            if (PlayerInformationHandler.Players.TryGetValue(inputString, out var userId))
+                ExPlayer.TryGet(userId, out playerToGiveCard);
+            else if (!PlayerExtensions.TryGetExiledPlayerById(inputString, out playerToGiveCard))
+                return null;
+            
+            return playerToGiveCard != null ? playerToGiveCard : null;
         }
     }
 }
