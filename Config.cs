@@ -18,12 +18,16 @@ public class Config : IConfig
 
     [Description("true = Plugin Enabled, false = Plugin Disabled.")]
     public bool IsEnabled { get; set; } = true;
+    
+    [Description("Ckeycard-specific settings!")]
+    public bool OverrideCKeycard { get; set; } = true;
+    
 
     [Description("Which maps to load upon using lobby! Can be empty or only have one.")]
     public List<string>? MapsToLoadOnLobby { get; set; } = [];
 
     [Description("Whether to unload the maps on lobby usage! Use this if you want to have different maps for normal rounds and for roleplays! :D")]
-    public bool? LobbyShouldUnloadMaps = false;
+    public bool? LobbyShouldUnloadMaps { get; set; } = false;
 
     [Description("Should debug logs be enabled? (This is required for webhook implementation, as it enables TLS 2 + 3.)")]
     public bool Debug { get; set; } = false;
@@ -40,8 +44,8 @@ public class Config : IConfig
     public float PlayerSpawnLocationX { get; set; } = 0f;
     public float PlayerSpawnLocationY { get; set; } = 0f;
     public float PlayerSpawnLocationZ { get; set; } = 0f;
-    [Description("Maximum length for names, when changed using `.name`.")] public int? NameMaxLength = 25;
-    [Description("Maximum length for customis, when changed using `.info`.")] public int? InfoMaxLength = 50;
+    [Description("Maximum length for names, when changed using `.name`.")] public int? NameMaxLength { get; set; } = 25;
+    [Description("Maximum length for customis, when changed using `.info`.")] public int? InfoMaxLength { get; set; } = 50;
 
     [Description("List of Departments, i.e. Security, Research")]
     public List<string> Departments { get; set; } = [
@@ -127,7 +131,8 @@ public class Config : IConfig
     [Description("Client-sided modmail command webhook logging URL.")] public string ModmailCommandWebhookUrl { get; set; } = string.Empty;
     [Description("Players which noclip get detected by Scp1344.")] public bool Scp1344NoclipDetection { get; set; } = false;
     
-    [Description("Which roles to exclude from the Scp1344 Noclip patch above. Not used if the scp_1344_noclip_detection above is true. Examples provided in the console output ")] public List<string> Scp1344NoclipExclusion { get; set; } = ["Scp173", "ListExample2"];
+    [Description("Which roles to exclude from the Scp1344 Noclip patch above. Not used if the scp_1344_noclip_detection above is true. Examples provided in the console output ")]
+    public List<string> Scp1344NoclipExclusion { get; set; } = ["Scp173", "ListExample2"];
 }
 
 public static class ConfigHelper
