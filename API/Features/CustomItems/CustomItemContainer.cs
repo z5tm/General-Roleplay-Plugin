@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Exiled.API.Features;
 using InventorySystem.Items;
 using InventorySystem.Items.Pickups;
 using Logger = LabApi.Features.Console.Logger;
@@ -107,12 +108,16 @@ public sealed class CustomItemContainer<T>
         _serials.Add(item.ItemSerial, value);
     }
 
-    public void RegisterItem(ushort serial, T value)
+    public bool RegisterItem(ushort serial, T value)
     {
-        if (value == null)
-            throw new ArgumentNullException(nameof(value));
-
+        if (Equals(value, default(T)))
+        {
+            Log.Error("Error! Value in RegisterItem is null or default!");
+            return false;
+        }
+        
         _serials.Add(serial, value);
+        return true;
     }
 
     public void SetItemValue(ItemPickupBase pickup, T value)
