@@ -5,6 +5,7 @@ using CustomItems;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Player;
+using Extensions;
 using GRPPCommands;
 using InventorySystem.Items;
 using MEC;
@@ -13,15 +14,11 @@ using UnityEngine;
 
 public sealed class TaserHandler : CustomItemHandler
 {
-    private TaserHandler()
-    {
-    }
-
     public CustomItemContainer Container { get; } = new();
-
+    
     public override string Name => "Taser";
     public override string[] Alias => ["stun gun", "tase"]; // WOOO I'M SO GLAD THEY ADDED ALIASES TO THESE THANKS GANG
-
+    
     public override void EnableEvents()
     {
         PlayerHandlers.Shot += Shot;
@@ -38,19 +35,13 @@ public sealed class TaserHandler : CustomItemHandler
         if (!HasItem(ev.Item.Base))
             return;
 
-        ev.Player.ShowHint("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<size=27><mark=#367ce8><size=23>|⚡|</size></mark><mark=#595959>||</mark><mark=#393D4780> <size=23><space=2.6em><b>ᴛᴀꜱᴇʀ</size><space=2.6em><size=0.1>.</size></mark></size>");
+        ev.Player.RueIMessage("<size=27><mark=#367ce8><size=23>|⚡|</size></mark><mark=#595959>||</mark><mark=#393D4780> <size=23><space=2.6em><b>ᴛᴀꜱᴇʀ</size><space=2.6em><size=0.1>.</size></mark></size>");
     }
-
-    public override bool HasItem(ushort serial)
-    {
-        return Container.HasItem(serial);
-    }
-
-    public override void ClearItems()
-    {
-        Container.ClearItems();
-    }
-
+    
+    public override bool HasItem(ushort serial) => Container.HasItem(serial);
+    
+    public override void ClearItems() => Container.ClearItems();
+    
     public void Shot(ShotEventArgs ev)
     {
         if (ev.Target == null)
@@ -58,22 +49,23 @@ public sealed class TaserHandler : CustomItemHandler
         if (ev.Player == null)
             return;
         var item = ev.Player.CurrentItem?.Base;
-
+        
         if (item == null)
             return;
-
+        
         if (!HasItem(item))
             return;
+        
         ev.CanHurt = false;
-
+        
         if (ev.Target.IsGodModeEnabled)
             return;
         if (ev.Target.IsScp && ev.Target.Role.Type != RoleTypeId.Scp0492)
             return;
-
+        
         if (ev.Distance > 7)
             return;
-
+        
         var chance = URandom.Range(0, 100);
         // var chanceAlfred = URandom.Range(1, 2);
         // var chanceSerious = URandom.Range(0, 1000);
@@ -101,7 +93,7 @@ public sealed class TaserHandler : CustomItemHandler
         ev.Target.EnableEffect(EffectType.Ensnared, 255, 15f);
         ev.Target.EnableEffect<Exhausted>(40f);
     }
-
+    
     private void Hurting(HurtingEventArgs ev)
     {
         if (ev.Attacker == null)
@@ -117,7 +109,7 @@ public sealed class TaserHandler : CustomItemHandler
             return;
         ev.Amount = 10f;
     }
-
+    
     private IEnumerator<float> RotateFastLeftRight(ExPlayer player)
     {
         if (!player.IsAlive || !player.IsConnected)
@@ -143,7 +135,7 @@ public sealed class TaserHandler : CustomItemHandler
             yield return Timing.WaitForSeconds(interval); // Wait 0.05 seconds before the next rotation
         }
     }
-
+    
     public void Reloading(ReloadingWeaponEventArgs ev)
     {
         if (!HasItem(ev.Firearm.Base))
@@ -151,7 +143,7 @@ public sealed class TaserHandler : CustomItemHandler
 
         ev.Firearm.MaxMagazineAmmo = 1;
     }
-
+    
     public override ItemBase GiveItem(ExPlayer player)
     {
         var item = player.AddItem(ItemType.GunCOM15);
@@ -160,7 +152,7 @@ public sealed class TaserHandler : CustomItemHandler
         firearm.MaxMagazineAmmo = 0;
         firearm.MagazineAmmo = 0;
         firearm.MaxBarrelAmmo = 1;
-
+        
         Container.RegisterItem(item.Base);
         return item.Base; // so atm i think i can confirm at minimum THIS section is being called, but unsure of what else
     }
