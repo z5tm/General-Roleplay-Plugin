@@ -6,25 +6,27 @@ using System.Linq;
 using CommandSystem;
 using Core;
 using CustomItems;
+using Enums;
 using Exiled.API.Enums;
-using Exiled.API.Features.Doors;
-using Exiled.API.Features.Items;
 using Exiled.Events.EventArgs.Player;
 using Extensions;
 using InventorySystem;
 using InventorySystem.Items;
+using LabApi.Features.Wrappers;
 using Lobby;
 using NorthwoodLib.Pools;
+using Door = Exiled.API.Features.Doors.Door;
+using Item = Exiled.API.Features.Items.Item;
 
 public sealed class KeycardHandler : CustomItemHandler
 {
-    private KeycardHandler()
-    {
-    }
+    public static KeycardHandler Instance { get; private set; }
+    
+    private KeycardHandler() { Instance = this; }
     public override string Name => "DefaultKeycard";
     public override string[] Alias => ["Keycard"];
-
-    public CustomItemContainer<Keycard> Container { get; } = new();
+    
+    public CustomItemContainer<GrppKeycard> Container { get; } = new();
 
     public override void EnableEvents()
     {
@@ -39,40 +41,51 @@ public sealed class KeycardHandler : CustomItemHandler
     public override ItemBase GiveItem(ExPlayer player)
     {
         var item = player.AddItem(ItemType.KeycardJanitor);
-        Container.RegisterItem(item.Base, new Keycard("Default Name", "Default Role", "01ax1", 1, []));
+        Container.RegisterItem(item.Base, new GrppKeycard("Default Name", "Default Role", "01ax1", 1, []));
         return item.Base;
     }
 
-    public static Action<ItemBase> GiveItemCallback(ItemType type, string role, int currentLevel, params Levels[] levels)
+    public static Action<ItemBase> GiveItemCallback(ItemType type, string role, int currentLevel, params KeycardSubLevels[] levels)
     {
         return item =>
         {
-            if (CustomItemsManager.Get<KeycardHandler>().Container.HasItem(item, out var card))
-            {
-                item.ItemTypeId = type;
-                item.OwnerInventory.SendItemsNextFrame = true;
+            if (!CustomItemsManager.Get<KeycardHandler>().Container.HasItem(item, out var card))
+                return;
 
-                card.Name = item.Owner.nicknameSync.DisplayName;
-                card.Role = role;
-                card.Checksum = new Random().Next(10, 99) + "ax" + new Random().Next(0, 9);
-                card.CurrentLevel = currentLevel;
-                card.CurrentSubLevels = levels.ToList();
-            }
+            item.ItemTypeId = type;
+            item.OwnerInventory.SendItemsNextFrame = true;
+
+            card.Name = item.Owner.nicknameSync.DisplayName;
+            card.Role = role;
+            card.Checksum = new Random().Next(10, 99) + "ax" + new Random().Next(0, 9);
+            card.CurrentLevel = currentLevel;
+            card.CurrentSubLevels = levels.ToList();
         };
     }
 
-    public static ItemGiver CreateInstance(ItemType item, string role, int currentLevel, params Levels[] levels) => (CustomItemsManager.Get<KeycardHandler>(), GiveItemCallback(item, role, currentLevel, levels));
+    public static ItemGiver CreateInstance(ItemType item, string role, int currentLevel, params KeycardSubLevels[] levels) => (CustomItemsManager.Get<KeycardHandler>(), GiveItemCallback(item, role, currentLevel, levels));
 
     public void GiveCard(ExPlayer player, ItemType item, string name, string role, string checksum, int currentLevel,
-        List<Levels> levels)
+        List<KeycardSubLevels> levels)
     {
         if (player.InventoryFull()) return;
         var val = Item.Create(item);
         player.AddItem(val);
 
-        Container.RegisterItem(val.Base, new Keycard(name, role, checksum, currentLevel, levels));
+        Container.RegisterItem(val.Base, new GrppKeycard(name, role, checksum, currentLevel, levels));
     }
 
+    public bool GiveCustomKeycard(ExPlayer player, KeycardItem keycard, GrppKeycard grppKeycard, ICommandSender? sender = null)
+    {
+        if (player.InventoryFull())
+        {
+            sender?.Respond("Error! The user's inventory is full.");
+            return false;
+        }
+        
+        return Container.RegisterItem(keycard.Serial, grppKeycard);
+    }
+    public static string GetKeycardChecksum() => URandom.Range(10, 99) + "ax1";
     public override void ClearItems() => Container.ClearItems();
 
     private void PickedUpItem(ChangingItemEventArgs ev)
@@ -82,7 +95,7 @@ public sealed class KeycardHandler : CustomItemHandler
         if (!ev.Item.IsKeycard || !Main.IsRoleplay || Container.HasItem(ev.Item.Serial) || CustomItemsManager.Get<CustomHandler>().Container.HasItem(ev.Item.Serial)) return;
         var role = "None";
         var currentLevel = 0;
-        List<Levels> levels = [];
+        List<KeycardSubLevels> levels = [];
 
         switch (ev.Item.Type)
         {
@@ -93,12 +106,12 @@ public sealed class KeycardHandler : CustomItemHandler
             case ItemType.KeycardScientist:
                 role = "Researcher";
                 currentLevel = 2;
-                levels = [Levels.Containment];
+                levels = [KeycardSubLevels.Containment];
                 break;
             case ItemType.KeycardResearchCoordinator:
                 role = "Supervisor";
                 currentLevel = 3;
-                levels = [Levels.Containment, Levels.Engineering];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Engineering];
                 break;
             case ItemType.KeycardZoneManager:
                 role = "Zone Manager";
@@ -107,45 +120,49 @@ public sealed class KeycardHandler : CustomItemHandler
             case ItemType.KeycardGuard:
                 role = "Officer";
                 currentLevel = 2;
-                levels = [Levels.Containment, Levels.Security];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Security];
                 break;
             case ItemType.KeycardMTFPrivate:
                 role = "Private";
                 currentLevel = 2;
-                levels = [Levels.Containment, Levels.Security];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Security];
                 break;
             case ItemType.KeycardContainmentEngineer:
                 role = "Engineer";
                 currentLevel = 3;
-                levels = [Levels.Containment, Levels.Engineering];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Engineering];
                 break;
             case ItemType.KeycardMTFOperative:
                 role = "Operative";
                 currentLevel = 3;
-                levels = [Levels.Containment, Levels.Engineering, Levels.Security];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Engineering, KeycardSubLevels.Security];
                 break;
             case ItemType.KeycardMTFCaptain:
                 role = "Captain";
                 currentLevel = 4;
-                levels = [Levels.Containment, Levels.Engineering, Levels.Security];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Engineering, KeycardSubLevels.Security];
                 break;
             case ItemType.KeycardFacilityManager:
                 role = "Manager";
                 currentLevel = 4;
-                levels = [Levels.Containment, Levels.Engineering, Levels.Security];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Engineering, KeycardSubLevels.Security];
                 break;
             case ItemType.KeycardChaosInsurgency:
                 role = "Chaos Insurgency";
                 currentLevel = 4;
-                levels = [Levels.Containment, Levels.Engineering, Levels.Security];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Engineering, KeycardSubLevels.Security];
                 break;
             case ItemType.KeycardO5:
                 currentLevel = 5;
-                levels = [Levels.Containment, Levels.Engineering, Levels.Security];
+                levels = [KeycardSubLevels.Containment, KeycardSubLevels.Engineering, KeycardSubLevels.Security];
                 break;
         }
 
-        Container.RegisterItem(ev.Item.Base, new Keycard($"{GRPPCommands.Name.FirstNames[new Random().Next(GRPPCommands.Name.FirstNames.Count)]} {GRPPCommands.Name.LastNames[new Random().Next(GRPPCommands.Name.LastNames.Count)]}", role, new Random().Next(10, 99) + "ax1", currentLevel, levels));
+        Container.RegisterItem(ev.Item.Base, new GrppKeycard(
+            name: $"{GRPPCommands.Name.FirstNames[new Random().Next(GRPPCommands.Name.FirstNames.Count)]} " +
+            $"{GRPPCommands.Name.LastNames[new Random().Next(GRPPCommands.Name.LastNames.Count)]}",
+            role,
+            GetKeycardChecksum(), currentLevel, levels));
     }
 
     private void CurrentItemChanged(ReferenceHub hub, ItemIdentifier oldItem, ItemIdentifier newItem)
@@ -169,11 +186,11 @@ public sealed class KeycardHandler : CustomItemHandler
             sb.AppendLine($"┃┃<pos=136>┃ <b>OPERATIONAL UNDER</b><pos=467><b>POSITION</b><pos=612>┃");
             sb.AppendLine($"┃┗━━━━━━┛ S.C.P Foundation<space=182>{card.Role}<pos=612>┃");
             sb.AppendLine($"┃<b>CLEARANCE CODES</b><pos=467><b>Level</b><pos=612>┃");
-            sb.AppendLine($"┃{(card.CurrentSubLevels.Count > 0 ? string.Join(", ", card.CurrentSubLevels) : "No Clearance Codes...")}<pos=467>{card.CurrentLevel}<pos=612>┃");
+            sb.AppendLine($"┃{(card.CurrentSubLevels.Any()? string.Join(", ", card.CurrentSubLevels) : "No Clearance Codes...")}<pos=467>{card.CurrentLevel}<pos=612>┃");
             sb.AppendLine($"┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫");
             sb.AppendLine($"┃Site-{Main.Site}<pos=350>Iss: {DateTime.Today.AddYears(30):d}   Exp: {DateTime.Today.AddYears(32):d}<pos=612>┃");
             sb.AppendLine($"┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
-
+            
             hintToShow = StringBuilderPool.Shared.ToStringReturn(sb);
         }
 
@@ -188,10 +205,10 @@ public sealed class KeycardHandler : CustomItemHandler
         if (ev.Player?.IsBypassModeEnabled ?? true)
             return;
 
-        if (ev.Player.CurrentItem == null) 
+        if (ev.Player.CurrentItem == null)
             return;
 
-        Keycard card;
+        GrppKeycard card;
 
         switch (ev.InteractingLocker?.Type)
         {
@@ -203,7 +220,7 @@ public sealed class KeycardHandler : CustomItemHandler
                 if (!Container.HasItem(ev.Player.CurrentItem.Serial, out card))
                     return;
 
-                if (card.CurrentLevel < 2 || !card.CurrentSubLevels.Contains(Levels.Security))
+                if (card.CurrentLevel < 2 || !card.CurrentSubLevels.Contains(KeycardSubLevels.Security))
                     return;
                 ev.IsAllowed = true;
                 break;
@@ -211,7 +228,7 @@ public sealed class KeycardHandler : CustomItemHandler
                 ev.IsAllowed = false;
                 if (!Container.HasItem(ev.Player.CurrentItem.Serial, out card))
                     return;
-                if (card.CurrentLevel < 3 || !card.CurrentSubLevels.Contains(Levels.Containment))
+                if (card.CurrentLevel < 3 || !card.CurrentSubLevels.Contains(KeycardSubLevels.Containment))
                     return;
                 ev.IsAllowed = true;
                 break;
@@ -221,7 +238,7 @@ public sealed class KeycardHandler : CustomItemHandler
                 ev.IsAllowed = false;
                 if (!Container.HasItem(ev.Player.CurrentItem.Serial, out card))
                     return;
-                if (card.CurrentLevel < 4 || !card.CurrentSubLevels.Contains(Levels.Security)  && !card.CurrentSubLevels.Contains(Levels.Containment))
+                if (card.CurrentLevel < 4 || !card.CurrentSubLevels.Contains(KeycardSubLevels.Security) && !card.CurrentSubLevels.Contains(KeycardSubLevels.Containment))
                     return;
                 ev.IsAllowed = true;
                 break;
@@ -252,15 +269,15 @@ public sealed class KeycardHandler : CustomItemHandler
         ev.IsAllowed = IsDoorAccessible(ev.Player, ev.Door, card);
     }
 
-    private class Permissions(int level, params Levels[] subLevels)
+    private class Permissions(int level, params KeycardSubLevels[] subLevels)
     {
-        public readonly Levels[] SubLevels = subLevels;
+        public readonly KeycardSubLevels[] SubLevels = subLevels;
         public readonly int Level = level;
     }
 
-    public static bool IsDoorAccessible(ExPlayer player, Door door, Keycard card)
+    public static bool IsDoorAccessible(ExPlayer player, Door door, GrppKeycard card)
     {
-        bool HasValidCard(int minLevel, params Levels[] requiredLevels) => card.CurrentLevel >= minLevel && requiredLevels.All(level => card.CurrentSubLevels.Contains(level));
+        bool HasValidCard(int minLevel, params KeycardSubLevels[] requiredLevels) => card.CurrentLevel >= minLevel && requiredLevels.All(level => card.CurrentSubLevels.Contains(level));
         bool DoorHavePermissions(out Permissions permissions)
         {
             permissions = door.Type switch
@@ -270,44 +287,44 @@ public sealed class KeycardHandler : CustomItemHandler
                 DoorType.EntranceDoor => new Permissions(-2),
                 DoorType.UnknownDoor => new Permissions(-2),
 
-                DoorType.Scp330 => new Permissions(2, Levels.Containment),
-                DoorType.Scp914Gate => new Permissions(2, Levels.Containment),
-                DoorType.GR18Inner => new Permissions(2, Levels.Containment),
-                DoorType.Scp079First => new Permissions(2, Levels.Containment),
-                DoorType.Scp079Second => new Permissions(2, Levels.Containment),
+                DoorType.Scp330 => new Permissions(2, KeycardSubLevels.Containment),
+                DoorType.Scp914Gate => new Permissions(2, KeycardSubLevels.Containment),
+                DoorType.GR18Inner => new Permissions(2, KeycardSubLevels.Containment),
+                DoorType.Scp079First => new Permissions(2, KeycardSubLevels.Containment),
+                DoorType.Scp079Second => new Permissions(2, KeycardSubLevels.Containment),
 
 
-                DoorType.Scp096 => new Permissions(3, Levels.Containment),
-                DoorType.Scp106Primary => new Permissions(3, Levels.Containment),
-                DoorType.Scp106Secondary => new Permissions(3, Levels.Containment),
-                DoorType.Scp173Gate => new Permissions(3, Levels.Containment),
-                DoorType.Scp173NewGate => new Permissions(3, Levels.Containment),
-                DoorType.Scp049Gate => new Permissions(3, Levels.Containment),
+                DoorType.Scp096 => new Permissions(3, KeycardSubLevels.Containment),
+                DoorType.Scp106Primary => new Permissions(3, KeycardSubLevels.Containment),
+                DoorType.Scp106Secondary => new Permissions(3, KeycardSubLevels.Containment),
+                DoorType.Scp173Gate => new Permissions(3, KeycardSubLevels.Containment),
+                DoorType.Scp173NewGate => new Permissions(3, KeycardSubLevels.Containment),
+                DoorType.Scp049Gate => new Permissions(3, KeycardSubLevels.Containment),
 
-                DoorType.Scp049Armory => new Permissions(2, Levels.Containment, Levels.Security),
+                DoorType.Scp049Armory => new Permissions(2, KeycardSubLevels.Containment, KeycardSubLevels.Security),
 
                 DoorType.CheckpointLczA => new Permissions(1),
                 DoorType.CheckpointLczB => new Permissions(1),
                 DoorType.CheckpointEzHczA => new Permissions(1),
                 DoorType.CheckpointEzHczB => new Permissions(1),
 
-                DoorType.CheckpointArmoryA => new Permissions(1, Levels.Security),
-                DoorType.CheckpointArmoryB => new Permissions(1, Levels.Security),
+                DoorType.CheckpointArmoryA => new Permissions(1, KeycardSubLevels.Security),
+                DoorType.CheckpointArmoryB => new Permissions(1, KeycardSubLevels.Security),
 
-                DoorType.GateA => new Permissions(3, Levels.Security),
-                DoorType.GateB => new Permissions(3, Levels.Security),
+                DoorType.GateA => new Permissions(3, KeycardSubLevels.Security),
+                DoorType.GateB => new Permissions(3, KeycardSubLevels.Security),
 
-                DoorType.PrisonDoor => new Permissions(2, Levels.Security),
-                DoorType.HczArmory => new Permissions(2, Levels.Security),
-                DoorType.LczArmory => new Permissions(2, Levels.Security),
-                DoorType.Scp079Armory => new Permissions(2, Levels.Security),
+                DoorType.PrisonDoor => new Permissions(2, KeycardSubLevels.Security),
+                DoorType.HczArmory => new Permissions(2, KeycardSubLevels.Security),
+                DoorType.LczArmory => new Permissions(2, KeycardSubLevels.Security),
+                DoorType.Scp079Armory => new Permissions(2, KeycardSubLevels.Security),
 
-                DoorType.HIDChamber => new Permissions(2, Levels.Containment),
-                DoorType.HIDLab => new Permissions(2, Levels.Containment),
+                DoorType.HIDChamber => new Permissions(2, KeycardSubLevels.Containment),
+                DoorType.HIDLab => new Permissions(2, KeycardSubLevels.Containment),
 
                 DoorType.Intercom => new Permissions(4),
 
-                DoorType.NukeSurface => new Permissions(5, Levels.Containment, Levels.Engineering, Levels.Security),
+                DoorType.NukeSurface => new Permissions(5, KeycardSubLevels.Containment, KeycardSubLevels.Engineering, KeycardSubLevels.Security),
                 _ => new Permissions(-1),
             };
 
@@ -323,15 +340,15 @@ public sealed class KeycardHandler : CustomItemHandler
             return door.KeycardPermissions switch
             {
                 KeycardPermissions.Intercom => HasValidCard(4),
-                KeycardPermissions.ArmoryLevelOne => HasValidCard(2, Levels.Security),
-                KeycardPermissions.ArmoryLevelTwo => HasValidCard(3, Levels.Security),
-                KeycardPermissions.ArmoryLevelThree => HasValidCard(3, Levels.Engineering),
+                KeycardPermissions.ArmoryLevelOne => HasValidCard(2, KeycardSubLevels.Security),
+                KeycardPermissions.ArmoryLevelTwo => HasValidCard(3, KeycardSubLevels.Security),
+                KeycardPermissions.ArmoryLevelThree => HasValidCard(3, KeycardSubLevels.Engineering),
 
-                KeycardPermissions.Checkpoints => HasValidCard(1, Levels.Security),
+                KeycardPermissions.Checkpoints => HasValidCard(1, KeycardSubLevels.Security),
 
-                KeycardPermissions.ContainmentLevelOne => HasValidCard(2, Levels.Containment),
-                KeycardPermissions.ContainmentLevelTwo => HasValidCard(3, Levels.Containment),
-                KeycardPermissions.ContainmentLevelThree => HasValidCard(4, Levels.Containment),
+                KeycardPermissions.ContainmentLevelOne => HasValidCard(2, KeycardSubLevels.Containment),
+                KeycardPermissions.ContainmentLevelTwo => HasValidCard(3, KeycardSubLevels.Containment),
+                KeycardPermissions.ContainmentLevelThree => HasValidCard(4, KeycardSubLevels.Containment),
 
                 // KeycardPermissions.ExitGates => expr,
                 // KeycardPermissions.AlphaWarhead => expr,
@@ -345,20 +362,13 @@ public sealed class KeycardHandler : CustomItemHandler
         return HasValidCard(perms.Level, perms.SubLevels);
     }
 
-    public sealed class Keycard(string name, string role, string checksum, int currentLevel, List<Levels> currentSubLevels)
+    public sealed class GrppKeycard(string name, string role, string checksum, int currentLevel, IEnumerable<KeycardSubLevels> currentSubLevels)
     {
         public string Name { get; set; } = name;
         public string Role { get; set; } = role;
         public string Checksum { get; set; } = checksum;
         public int CurrentLevel { get; set; } = currentLevel;
-        public List<Levels> CurrentSubLevels { get; set; } = currentSubLevels;
-    }
-
-    public enum Levels
-    {
-        Containment,
-        Engineering,
-        Security
+        public IEnumerable<KeycardSubLevels> CurrentSubLevels { get; set; } = currentSubLevels;
     }
 }
 
@@ -373,6 +383,7 @@ public class GiveKeycard : ICommand
     {
         if (!sender.CheckRemoteAdmin(out response))
             return false;
+
         if (arguments.Count < 5)
         {
             response = "<color=red>Arguments : giveid (Player Id / Name) (Item Id) (Perms) (Checkpoint Checksum) ('Position')";
@@ -394,14 +405,16 @@ public class GiveKeycard : ICommand
         if (i is < 0 or > 5)
             return false;
 
-        List<KeycardHandler.Levels> levels = [];
-        if (levels == null) throw new ArgumentNullException(nameof(levels));
-        if(arguments.At(2).ToLower().Contains("c"))
-            levels.Add(KeycardHandler.Levels.Containment);
-        if(arguments.At(2).ToLower().Contains("e"))
-            levels.Add(KeycardHandler.Levels.Engineering);
-        if(arguments.At(2).ToLower().Contains("s"))
-            levels.Add(KeycardHandler.Levels.Security);
+        List<KeycardSubLevels> levels = [];
+
+        if (arguments.At(2).ToLower().Contains("c"))
+            levels.Add(KeycardSubLevels.Containment);
+
+        if (arguments.At(2).ToLower().Contains("e"))
+            levels.Add(KeycardSubLevels.Engineering);
+
+        if (arguments.At(2).ToLower().Contains("s"))
+            levels.Add(KeycardSubLevels.Security);
 
         response = "<color=red>Too many characters at <color=yellow>CHECKSUM\n<color=yellow>The limit is 9 characters";
         if (arguments.At(3).Length > 9)
@@ -413,10 +426,17 @@ public class GiveKeycard : ICommand
         // Join the additional arguments into a single string if needed
         var additionalArgumentsString = string.Join(" ", additionalArguments);
         response = "<color=red>Too many characters at <color=yellow>Position\n<color=yellow>The limit is 17";
+
         if (additionalArgumentsString.Length > 17)
             return false;
-        CustomItemsManager.Get<KeycardHandler>().GiveCard(player, itemType, player.DisplayNickname, additionalArgumentsString, arguments.At(3), i, levels);
-        response = $"<color=green>Successfully gave ID card to {player.DisplayNickname}\nItem: {itemType}\nPermissions:\n> {i}\n> {string.Join(", ", levels)}\nPosition: {additionalArgumentsString}";
+
+        KeycardHandler.Instance.GiveCard(player, itemType, player.DisplayNickname, additionalArgumentsString, arguments.At(3), i, levels);
+        response = $"<color=green>Successfully gave ID card to {player.DisplayNickname}" +
+                   $"\nItem: {itemType}" +
+                   $"\nPermissions:" +
+                   $"\n> {i}" +
+                   $"\n> {string.Join(", ", levels)}" +
+                   $"\nPosition: {additionalArgumentsString}</color>";
         return true;
     }
 }
