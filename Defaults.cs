@@ -1,5 +1,9 @@
 namespace GRPP;
 
+using System.Collections.Generic;
+using System.Linq;
+using RueI.API.Elements;
+
 public static class Defaults
 {
     public const string Site = "22";
@@ -17,5 +21,36 @@ public static class Defaults
     public const float MaxHeight = 1.1f;
     public const float MinHeight = 0.9f;
     public const int MaximumCreateDescription = 50;
-
+    
+    public static class Tagging
+    {
+        public static List<Tag>.Enumerator GetEnumerator() => GetAllTags().GetEnumerator();
+        public static void Clear() => _cachedList = null;
+        public static List<Tag> All => GetAllTags();
+        private static List<Tag>? _cachedList;
+        
+        private static List<Tag> GetAllTags()
+        {
+            if (_cachedList != null)
+                return _cachedList;
+            
+            _cachedList = [];
+            
+            var fields = typeof(Tagging).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            
+            foreach (var field in fields.Where(fld => fld.FieldType == typeof(Tag) && fld.IsInitOnly))
+                _cachedList.Add((Tag)field.GetValue(null));
+            
+            return _cachedList;
+        }
+        
+        // All tags below
+        
+        public static readonly Tag ErrorTag = new("ErrorTag");
+        public static readonly Tag WarningTag = new("WarningTag");
+        public static readonly Tag InfoTag = new("InfoTag");
+        public static readonly Tag SuccessTag = new("SuccessTag");
+        public static readonly Tag CustomItemTag = new("CustomItemTag");
+        
+    }
 }
