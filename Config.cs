@@ -119,6 +119,13 @@ public class Config : IConfig
     // [Description("List of SteamID64s that are permitted to bypass restrictive mode.")] public List<String>? BypassID64 { get; set; } = [];
     // [Description("List of roles that are permitted to bypass restrictive modes. This is not a required field, and should only be used if permissions are not being set. If you need assistance, join our discord.")] public List<String>? BypassRoles { get; set; } = [];
     [Description("Whether players should be permitted to use the audio player, using `/au`. This is HIGHLY unrecommended.")] public bool ClientAu { get; set; } = false;
+    
+    [Description("Whether radio channels are enabled or not")] public bool RadioChannelsEnabled { get; set; } = false;
+    
+    [Description("Whether adding a radio channel named off to the list will turn the radio off")] public bool OffChannelEnabled { get; set; } = true;
+
+    [Description("All radio channels")] public string[] Channels { get; set; } = { "General", "Testing" };
+	    
     [Description("Whether to utilize async while creating directories.")] public bool? CreateDirectoryAsync { get; set; }= true;
 
     [Description("Permits non-RA users to use `.print` to create janitoral keycards with information on them. Even if enabled in config, this must be enabled through RA with `printon`.")] public bool AllowClientCreateCommand { get; set; } = false;
