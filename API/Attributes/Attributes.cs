@@ -9,17 +9,13 @@ using System;
 /// The method must be static and with no parameters to be called.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class OnPluginEnabledAttribute : Attribute
-{
-}
+public sealed class OnPluginEnabledAttribute : Attribute;
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class OnPluginDisabledAttribute : Attribute;
 
 [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-public class RegionAttribute : Attribute
+public class RegionAttribute(string regionName) : Attribute
 {
-    public string RegionName { get; private set; }
-
-    public RegionAttribute(string regionName)
-    {
-        RegionName = regionName;
-    }
+    public string RegionName { get; private set; } = regionName;
 }
