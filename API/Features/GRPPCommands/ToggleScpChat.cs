@@ -83,22 +83,29 @@ public class ToggleScpChat : ICommand
         ServerHandlers.WaitingForPlayers += WaitingForPlayers;
     }
 
+    [OnPluginDisabled]
+    private static void DisableEvents()
+    {
+        PlayerHandlers.VoiceChatting -= VoiceChatting;
+        ServerHandlers.WaitingForPlayers -= WaitingForPlayers;
+    }
+    
     private static void VoiceChatting(VoiceChattingEventArgs ev)
     {
-        VoiceMessage msgCopy = ev.VoiceMessage;
-
+        var msgCopy = ev.VoiceMessage;
+        
         if (ToggledPlayers.Contains(ev.Player) && !ev.Player.IsScp)
         {
-            foreach (ExPlayer player in ExPlayer.List.Where(p => p != ev.Player && (p.IsScp || ToggledPlayers.Contains(p))))
+            foreach (var player in ExPlayer.List.Where(p => p != ev.Player && (p.IsScp || ToggledPlayers.Contains(p))))
             {
                 msgCopy.Channel = VoiceChatChannel.ScpChat;
                 player.ReferenceHub.connectionToClient.Send(msgCopy);
             }
-
+            
             ev.IsAllowed = false;
             return;
         }
-
+        
         if (msgCopy.Channel != VoiceChatChannel.ScpChat) return;
         foreach (var player in ToggledPlayers)
         {
