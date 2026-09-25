@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CommandSystem;
 using Core;
-using CustomItems;
+using Core.CustomItems;
 using Enums;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Player;
@@ -34,6 +34,14 @@ public sealed class KeycardHandler : CustomItemHandler
         PlayerHandlers.ChangingItem += PickedUpItem;
         PlayerHandlers.InteractingLocker += InteractingLocker;
         PlayerHandlers.InteractingDoor += InteractingDoor;
+    }
+
+    public override void DisableEvents()
+    {
+        Inventory.OnCurrentItemChanged -= CurrentItemChanged;
+        PlayerHandlers.ChangingItem -= PickedUpItem;
+        PlayerHandlers.InteractingLocker -= InteractingLocker;
+        PlayerHandlers.InteractingDoor -= InteractingDoor;   
     }
 
     public override bool HasItem(ushort serial) => Container.HasItem(serial);
@@ -263,23 +271,29 @@ public sealed class KeycardHandler : CustomItemHandler
 
         if (ev.Door.IsLocked)
             return;
-
+        
         if (ev.Player.CurrentItem == null || !Container.HasItem(ev.Player.CurrentItem.Serial, out var card))
             card = null; // Yes I know this is just to prevent a null reference exception whenever interacting with a door with no items.
         ev.IsAllowed = IsDoorAccessible(ev.Player, ev.Door, card);
     }
-
+    
     private class Permissions(int level, params KeycardSubLevels[] subLevels)
     {
         public readonly KeycardSubLevels[] SubLevels = subLevels;
         public readonly int Level = level;
     }
 
-    public static bool IsDoorAccessible(ExPlayer player, Door door, GrppKeycard card)
+    public static bool IsDoorAccessible(ExPlayer player, Door door, GrppKeycard? card)
     {
         bool HasValidCard(int minLevel, params KeycardSubLevels[] requiredLevels) => card.CurrentLevel >= minLevel && requiredLevels.All(level => card.CurrentSubLevels.Contains(level));
         bool DoorHavePermissions(out Permissions permissions)
         {
+            if (door.GameObject.IsMER)
+            {
+                
+                // return;
+            }
+            
             permissions = door.Type switch
             {
                 DoorType.HeavyContainmentDoor => new Permissions(-2),

@@ -1,6 +1,6 @@
 ﻿namespace GRPP.API.Features.Items;
 
-using CustomItems;
+using Core.CustomItems;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
@@ -9,10 +9,6 @@ using InventorySystem.Items;
 
 public sealed class BatonHandler : CustomItemHandler
 {
-    private BatonHandler()
-    {
-    }
-
     public CustomItemContainer Container { get; } = new();
 
     public override string Name => "Baton";
@@ -23,6 +19,13 @@ public sealed class BatonHandler : CustomItemHandler
         PlayerHandlers.Hurting += SwingJailBird;
         Item.ChargingJailbird += ChargeJailBird;
         PlayerHandlers.ChangingItem += ChangingItem;
+    }
+    
+    public override void DisableEvents()
+    {
+        PlayerHandlers.Hurting -= SwingJailBird;
+        Item.ChargingJailbird -= ChargeJailBird;
+        PlayerHandlers.ChangingItem -= ChangingItem;
     }
 
     public void ChangingItem(ChangingItemEventArgs ev)
@@ -35,7 +38,7 @@ public sealed class BatonHandler : CustomItemHandler
 
         ev.Player.ShowHint("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<size=27><mark=#367ce8><size=23>|⚡|</size></mark><mark=#595959>||</mark><mark=#393D4780> <size=23><space=2.6em><b>ᴇʟᴇᴄᴛʀɪᴄ ʙᴀᴛᴏɴ</size><space=2.6em><size=0.1>.</size></mark></size>");
     }
-
+    
     public override bool HasItem(ushort serial) => Container.HasItem(serial);
 
     public override void ClearItems() => Container.ClearItems();

@@ -1,6 +1,6 @@
 ﻿namespace GRPP.API.Features.Items;
 
-using CustomItems;
+using Core.CustomItems;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
@@ -10,10 +10,6 @@ using InventorySystem.Items;
 
 public sealed class SerratedKnife : CustomItemHandler
 {
-    private SerratedKnife()
-    {
-    }
-
     public CustomItemContainer Container { get; } = new();
 
     public override string Name => "SerratedKnife";
@@ -24,6 +20,13 @@ public sealed class SerratedKnife : CustomItemHandler
         PlayerHandlers.Hurting += Swinging1509;
         PlayerHandlers.ChangingItem += ChangingItem;
     }
+
+    public override void DisableEvents()
+    {
+        PlayerHandlers.Hurting -= Swinging1509;
+        PlayerHandlers.ChangingItem -= ChangingItem;
+    }
+
     public void ChangingItem(ChangingItemEventArgs ev)
     {
         if (ev.Item == null)

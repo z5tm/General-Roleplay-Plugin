@@ -2,7 +2,7 @@
 
 using System;
 using CommandSystem;
-using CustomItems;
+using Core.CustomItems;
 using Extensions;
 using Enumerable = System.Linq.Enumerable;
 

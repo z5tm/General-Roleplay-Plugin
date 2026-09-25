@@ -3,7 +3,7 @@
 using System;
 using Attributes;
 using CommandSystem;
-using CustomItems;
+using Core.CustomItems;
 using EasyTmp;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Player;
@@ -13,10 +13,6 @@ using UnityEngine;
 
 public sealed class ShivHandler : CustomItemHandler
 {
-    private ShivHandler()
-    {
-    }
-
     public CustomItemContainer Container { get; } = new();
 
     public override string Name => "Shiv";
@@ -26,6 +22,12 @@ public sealed class ShivHandler : CustomItemHandler
     {
         PlayerHandlers.UsingItem += UsedItem;
         PlayerHandlers.ChangingItem += ChangingItem;
+    }
+
+    public override void DisableEvents()
+    {
+        PlayerHandlers.UsingItem -= UsedItem;
+        PlayerHandlers.ChangingItem -= ChangingItem;
     }
 
     public void ChangingItem(ChangingItemEventArgs ev)

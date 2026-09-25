@@ -4,8 +4,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CommandSystem;
+using Core.CustomItems;
 using Core.Webhooks;
-using CustomItems;
 using EasyTmp;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Permissions.Extensions;
@@ -14,7 +14,6 @@ using InventorySystem.Items;
 
 public sealed class CustomHandler : CustomItemHandler
 {
-    private CustomHandler() { }
     public CustomItemContainer<Item> Container { get; } = new();
 
     public override string Name => "";
@@ -24,6 +23,12 @@ public sealed class CustomHandler : CustomItemHandler
     {
         PlayerHandlers.ChangingItem += ChangingItems;
         PlayerHandlers.UsingItem += ItemUse;
+    }
+
+    public override void DisableEvents()
+    {
+        PlayerHandlers.ChangingItem -= ChangingItems;
+        PlayerHandlers.UsingItem -= ItemUse;
     }
 
     public override bool HasItem(ushort serial)
@@ -37,7 +42,14 @@ public sealed class CustomHandler : CustomItemHandler
         Container.RegisterItem(item.Base, new Item("Radical Coin"));
         return item.Base;
     }
-
+    
+    public ItemBase GiveItem(ExPlayer player, string name, ItemType type)
+    {
+        var item = player.AddItem(type);
+        Container.RegisterItem(item.Base, new Item(name));
+        return item.Base;
+    }
+    
     public void ChangingItems(ChangingItemEventArgs ev)
     {
         if (ev.Item == null)
@@ -61,14 +73,6 @@ public sealed class CustomHandler : CustomItemHandler
         ev.Player.RemoveHeldItem();
         ev.Player.ShowHint("Mmmm, that tasted good!", 5f);
     }
-
-    public ItemBase GiveItem(ExPlayer player, string name, ItemType type)
-    {
-        var item = player.AddItem(type);
-        Container.RegisterItem(item.Base, new Item(name));
-        return item.Base;
-    }
-
     public override void ClearItems()
     {
         Container.ClearItems();

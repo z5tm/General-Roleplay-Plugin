@@ -8,8 +8,8 @@ using Attributes;
 using Christmas.Scp2536;
 using CommandSystem;
 using Core;
+using Core.CustomItems;
 using Core.Webhooks;
-using CustomItems;
 using Department;
 using EasyTmp;
 using Enums;
@@ -159,6 +159,8 @@ public class UseLobbyCommand : ICommand
                 {
                     Logger.Debug($"Failure when attempting to load maps. \"{e.Message}\" -- Attempted map: {map}");
                 }
+            
+            ProjectMERInterfacer.Initialize(); // todo
         }
         
         exUser.Broadcast(5, "REMEMBER TO USE \"BEGINROLEPLAY\"", Broadcast.BroadcastFlags.AdminChat);

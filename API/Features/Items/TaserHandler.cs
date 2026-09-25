@@ -1,7 +1,7 @@
 ﻿namespace GRPP.API.Features.Items;
 
 using System.Collections.Generic;
-using CustomItems;
+using Core.CustomItems;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.Events.EventArgs.Player;
@@ -25,6 +25,14 @@ public sealed class TaserHandler : CustomItemHandler
         PlayerHandlers.ReloadingWeapon += Reloading;
         PlayerHandlers.ChangingItem += ChangingItem;
         PlayerHandlers.Hurting += Hurting;
+    }
+
+    public override void DisableEvents()
+    {
+        PlayerHandlers.Shot -= Shot;
+        PlayerHandlers.Hurting -= Hurting;
+        PlayerHandlers.ReloadingWeapon -= Reloading;
+        PlayerHandlers.ChangingItem -= ChangingItem;
     }
 
     public void ChangingItem(ChangingItemEventArgs ev)
@@ -67,15 +75,7 @@ public sealed class TaserHandler : CustomItemHandler
             return;
         
         var chance = URandom.Range(0, 100);
-        // var chanceAlfred = URandom.Range(1, 2);
-        // var chanceSerious = URandom.Range(0, 1000);
-
         
-        // if (chanceAlfred == 1 && Lobby.IsRoleplay)
-        // {
-        //     ev.Target.EnableEffect(EffectType.CardiacArrest, 40f);
-        //     return;
-        // }
         if (chance == 1 && TaserMod.TaserCardiac)
         {
             ev.Target.EnableEffect(EffectType.CardiacArrest, 10f);

@@ -1,6 +1,6 @@
 ﻿namespace GRPP.API.Features.Items;
 
-using CustomItems;
+using Core.CustomItems;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.API.Features.Pickups;
@@ -15,10 +15,6 @@ using static InventorySystem.Items.Usables.Scp244.Hypothermia.Hypothermia;
 
 public sealed class TearGasHandler : CustomItemHandler
 {
-    private TearGasHandler()
-    {
-    }
-
     public static TearGasInfo DefaultInfo => new()
     {
         DamagePS = 2,
@@ -44,7 +40,13 @@ public sealed class TearGasHandler : CustomItemHandler
         Map.ExplodingGrenade += ExplodingGrenade;
         PlayerHandlers.ChangingItem += ChangingItem;
     }
-
+    
+    public override void DisableEvents()
+    {
+        Map.ExplodingGrenade -= ExplodingGrenade;
+        PlayerHandlers.ChangingItem -= ChangingItem;
+    }
+    
     public void ChangingItem(ChangingItemEventArgs ev)
     {
         if (ev.Item == null)

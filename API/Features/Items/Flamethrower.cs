@@ -1,25 +1,18 @@
 ﻿namespace GRPP.API.Features.Items;
 
-using CustomItems;
+using Core.CustomItems;
 using Exiled.API.Enums;
 using Exiled.API.Features;
-using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
-using Exiled.Events.Handlers;
 using InventorySystem.Items;
-using LabApi.Events.Arguments.Scp914Events;
 
 public sealed class FlameThrowerHandler : CustomItemHandler
 {
-    private FlameThrowerHandler()
-    {
-    }
-
     public CustomItemContainer Container { get; } = new();
 
     public override string Name => "Flamethrower";
     public override string[] Alias => ["flame", "ft"];
-
+    
     public override void EnableEvents()
     {
         PlayerHandlers.Hurting += Flame;
@@ -27,7 +20,15 @@ public sealed class FlameThrowerHandler : CustomItemHandler
         PlayerHandlers.ReloadingWeapon += ReloadFlame;
         PlayerHandlers.UnloadingWeapon += UnloadFlame;
     }
-
+    
+    public override void DisableEvents()
+    {
+        PlayerHandlers.Hurting -= Flame;
+        PlayerHandlers.ChangingItem -= ChangingItem;
+        PlayerHandlers.ReloadingWeapon -= ReloadFlame;
+        PlayerHandlers.UnloadingWeapon -= UnloadFlame;
+    }
+    
     public void ChangingItem(ChangingItemEventArgs ev)
     {
         if (ev.Item == null)

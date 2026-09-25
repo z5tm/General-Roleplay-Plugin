@@ -1,7 +1,7 @@
 ﻿namespace GRPP.API.Features.Items;
 
 using System.Collections.Generic;
-using CustomItems;
+using Core.CustomItems;
 using Exiled.API.Features.Pickups;
 using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Player;
@@ -14,10 +14,6 @@ using UnityEngine;
 
 public sealed class SmokeGrenadeHandler : CustomItemHandler
 {
-    private SmokeGrenadeHandler()
-    {
-    }
-
     public static SmokeGrenadeInfo GetDefaultInfo => new()
     {
         GrowingTime = 5f,
@@ -34,6 +30,12 @@ public sealed class SmokeGrenadeHandler : CustomItemHandler
     {
         Map.ExplodingGrenade += ExplodingGrenade;
         PlayerHandlers.ChangingItem += ChangingItem;
+    }
+
+    public override void DisableEvents()
+    {
+        Map.ExplodingGrenade -= ExplodingGrenade;
+        PlayerHandlers.ChangingItem -= ChangingItem;
     }
 
     public void ChangingItem(ChangingItemEventArgs ev)

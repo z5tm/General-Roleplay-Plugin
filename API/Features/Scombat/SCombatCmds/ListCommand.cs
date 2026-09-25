@@ -3,7 +3,7 @@
 using System;
 using System.Linq;
 using CommandSystem;
-using CustomItems;
+using Core.CustomItems;
 using Extensions;
 
 public sealed class ListCommand : ICommand, IUsageProvider
