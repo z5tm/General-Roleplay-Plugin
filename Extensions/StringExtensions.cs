@@ -1,8 +1,9 @@
 namespace GRPP.Extensions;
 
 using System;
-using UnityEngine;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using UnityEngine;
 using System.Text.RegularExpressions;
 using API.Core;
 using Exiled.API.Features;
@@ -46,16 +47,12 @@ public static class StringExtensions
             return string.Empty; // if string is null or empty, return nothing.
         }
         
-        public ExPlayer? GetPlayer()
+        public bool GetPlayer([NotNullWhen(true)] out ExPlayer? player)
         {
-            ExPlayer? playerToGiveCard;
+            if (PlayerExtensions.TryGetExiledPlayerById(inputString, out player))
+                return true;
             
-            if (PlayerInformationHandler.Players.TryGetValue(inputString, out var userId))
-                ExPlayer.TryGet(userId, out playerToGiveCard);
-            else if (!PlayerExtensions.TryGetExiledPlayerById(inputString, out playerToGiveCard))
-                return null;
-            
-            return playerToGiveCard != null ? playerToGiveCard : null;
+            return PlayerInformationHandler.Players.TryGetValue(inputString, out var userId) && ExPlayer.TryGet(userId, out player);
         }
     }
 }
