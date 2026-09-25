@@ -1,5 +1,6 @@
 ﻿namespace GRPP.Extensions;
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using API.Features;
@@ -10,10 +11,12 @@ using PlayerRoles.Voice;
 using API.Features.Department;
 using API.Features.GRPPCommands;
 using API.Features.Lobby;
-using LabApi.Features.Wrappers;
+using CustomPlayerEffects;
+using Exiled.API.Features;
 using RueI.API;
 using RueI.API.Elements;
 using UnityEngine;
+using Player = LabApi.Features.Wrappers.Player;
 using RadioItem = InventorySystem.Items.Radio.RadioItem;
 
 public static class PlayerExtensions
@@ -68,14 +71,12 @@ public static class PlayerExtensions
         public bool InventoryFull() => player.Inventory.UserInventory.Items.Count >= 8;
         public RueDisplay Display => RueDisplay.Get(player);
         
-        public void RueIMessage(string message, Tag? messageIdentifierTag = null, float timeSeconds = 5f, float position = 100f)
+        public void RueIMessage(string message, Tag? messageIdentifierTag = null, float timeSeconds = 5f, float position = 100f, IEnumerable<Tag>? tagsToClear = null)
         {
-            if (messageIdentifierTag?.Id == null)
-            {
-                player.Display.Show(new BasicElement(position, message), timeSeconds);
-                return;
-            }
-            player.Display.Show(messageIdentifierTag, new BasicElement(position, message), timeSeconds);
+            if (tagsToClear != null)
+                player.ClearTheseTags(tagsToClear);
+            
+            player.Display.Show(messageIdentifierTag?.Id == null ? Defaults.Tagging.GenericTag : messageIdentifierTag, new BasicElement(position, message), timeSeconds);
         }
         
         public void RueIMessage(Element message, Tag? messageIdentifierTag = null, float timeSeconds = 5f)
@@ -94,6 +95,29 @@ public static class PlayerExtensions
                 player?.Display?.Remove(tag);
         }
         public void ClearAllTags() => player.RemoveAllTags();
+        
+        public void RemoveAllTagsExcept(Tag tagToExclude)
+        {
+            foreach (var tag in Defaults.Tagging.All.Where(tag => tag?.Id != null && tag != tagToExclude))
+                player?.Display?.Remove(tag);
+        }
+        public void RemoveAllTagsExcept(IEnumerable<Tag> tagsToExclude)
+        {
+            foreach (var tag in Defaults.Tagging.All.Where(tag => tag?.Id != null && !tagsToExclude.Contains(tag)))
+                player?.Display?.Remove(tag);
+        }
+        
+        public void ClearAllTagsExcept(Tag tagToExclude) => player.RemoveAllTagsExcept(tagToExclude);
+        public void ClearAllTagsExcept(IEnumerable<Tag> tagsToExclude) => player.RemoveAllTagsExcept(tagsToExclude);
+
+        public void RemoveTheseTags(IEnumerable<Tag> tagsToClear)
+        {
+            foreach (var tag in Defaults.Tagging.All.Where(tag => tag?.Id != null && tagsToClear.Contains(tag)))
+                player?.Display?.Remove(tag);
+        }
+        public void ClearTheseTags(IEnumerable<Tag> tagsToClear) => player.RemoveTheseTags(tagsToClear);
+        public void RemoveTag(Tag tag) => player.Display.Remove(tag);
+        public void ClearTag(Tag tag) => player.RemoveTag(tag);
     }
     
     public static bool InventoryFull(this ReferenceHub player) => player.inventory.UserInventory.Items.Count >= 8;
@@ -135,19 +159,7 @@ public static class PlayerExtensions
             var name = unknown ? sender1.DisplayNickname : "Unknown";
             var id = unknown ? sender1.Id : -1;
 
-            if (sender.ScomPlayer().CurrentRole.RoleEntry == null)
-            {
-                sender1.SendConsoleMessage("> Unknown SCOM User", "red");
-                return;
-            }
-
-            if (sender.ScomPlayer().CurrentRole.Rank == null)
-            {
-                sender1.SendConsoleMessage("> Unknown SCOM User", "red");
-                return;
-            }
-
-            if (!sender.ScomPlayer().CurrentRole.Rank.HasPda)
+            if (sender.ScomPlayer().CurrentRole.RoleEntry == null || sender.ScomPlayer().CurrentRole.Rank == null || !sender.ScomPlayer().CurrentRole.Rank.HasPda)
             {
                 sender1.SendConsoleMessage("> Unknown SCOM User", "red");
                 return;
@@ -165,17 +177,28 @@ public static class PlayerExtensions
             sender1.SendConsoleMessage("> Your message has been sent, and received on their end...", "green");
         }
         
-        public bool HasRadio(out RadioItem radio)
+        public bool HasRadio([NotNullWhen(true)] out RadioItem? radio)
         {
             if (sender.RoleManager.CurrentRole is IVoiceRole { VoiceModule: IRadioVoiceModule radioModule })
                 return radioModule.RadioPlayback.TryGetUserRadio(out radio);
             radio = null;
             return false;
         }
+        
+        public void GrppEnableEffects(IEnumerable<Effect> effects)
+        {
+            foreach (var effect in effects)
+                sender.EnableEffect(effect.Type, effect.Intensity, effect.Duration);
+        }
+
+        public void GrppEnableEffects(IEnumerable<StatusEffectBase> effects)
+        {
+            foreach (var effect in effects)
+                sender.EnableEffect(effect);
+        }
     }
     
-    [MemberNotNullWhen(true)]
-    public static bool HasRadio(this ReferenceHub player, out RadioItem? radio)
+    public static bool HasRadio(this ReferenceHub player, [NotNullWhen(true)] out RadioItem? radio)
     {
         if (player.roleManager.CurrentRole is IVoiceRole { VoiceModule: IRadioVoiceModule radioModule })
             return radioModule.RadioPlayback.TryGetUserRadio(out radio);
@@ -184,8 +207,7 @@ public static class PlayerExtensions
         return false;
     }
     
-    [MemberNotNullWhen(true)]
-    public static bool TryGetExiledPlayerById(string id, out ExPlayer? player)
+    public static bool TryGetExiledPlayerById(string id, [NotNullWhen(true)] out ExPlayer? player)
     {
         if (int.TryParse(id, out var playerId))
             return ExPlayer.TryGet(playerId, out player); 
@@ -194,8 +216,7 @@ public static class PlayerExtensions
         return false;
     }
     
-    [MemberNotNullWhen(true)]
-    public static bool TryGetPlayerById(string id, out Player? player)
+    public static bool TryGetPlayerById(string id, [NotNullWhen(true)] out Player? player)
     {
         if (int.TryParse(id, out var playerId))
             return Player.TryGet(playerId, out player); 
