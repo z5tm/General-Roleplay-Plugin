@@ -51,6 +51,6 @@ public static class Defaults
         public static readonly Tag InfoTag = new("InfoTag");
         public static readonly Tag SuccessTag = new("SuccessTag");
         public static readonly Tag CustomItemTag = new("CustomItemTag");
-        
+        public static readonly Tag GenericTag = new("GenericTag");
     }
 }
