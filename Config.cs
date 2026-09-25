@@ -8,8 +8,9 @@ using System.ComponentModel;
 using API.Attributes;
 using Exiled.API.Interfaces;
 using Extensions;
-using LabApi.Features.Console;
 using PlayerRoles;
+using UnityEngine;
+using Logger = LabApi.Features.Console.Logger;
 
 public class Config : IConfig
 {
@@ -133,6 +134,12 @@ public class Config : IConfig
     
     [Description("Which roles to exclude from the Scp1344 Noclip patch above. Not used if the scp_1344_noclip_detection above is true. Examples provided in the console output ")]
     public List<string> Scp1344NoclipExclusion { get; set; } = ["Scp173", "ListExample2"];
+    [Description("SCP-1499 Dimension Map Name. Set to empty to disable.")]
+    public string Scp1499Map { get; set; } = string.Empty;
+    [Description("SCP-1499 Dimension Player Spawn Point")]
+    public Vector3 Scp1499PlayerSpawnPoint { get; set; } = new(0,0,0);
+    [Description("Time that the player stays in the SCP-1499 dimension, before getting TPed out.")]
+    public float Scp1499Time { get; set; } = 180f;
 }
 
 public static class ConfigHelper
