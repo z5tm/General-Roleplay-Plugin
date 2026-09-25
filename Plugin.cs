@@ -61,13 +61,15 @@ public sealed class Plugin : Plugin<Config>
 
     public override void OnDisabled()
     {
+        InvokeOnDisabledAttributes();
+        
         _harmony?.UnpatchAll();
         _harmony = null;
         _singleton = null;
         base.OnDisabled();
         GlobalConfig = null;
     }
-
+    
     private static void SpawningSchematic(SchematicSpawnedEventArgs ev)
     {
         foreach (var gameObject in ev.Schematic.AttachedBlocks)
@@ -117,7 +119,7 @@ public sealed class Plugin : Plugin<Config>
         {
             if (method.GetCustomAttribute<OnPluginEnabledAttribute>() is null)
                 continue;
-
+            
             if (!method.IsStatic)
             {
                 Log.Warn($"Failed to invoke method {method.DeclaringType}::{method.Name} on plugin enabled, as it is not static.");
@@ -130,6 +132,36 @@ public sealed class Plugin : Plugin<Config>
                 continue;
             }
 
+            try
+            {
+                method.Invoke(null, null);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+        }
+    }
+    /// <summary>Invokes all static void methods within the assembly that have the <see cref="OnPluginDisabledAttribute"/> attribute.</summary>
+    private void InvokeOnDisabledAttributes()
+    {
+        foreach (var method in AccessTools.GetTypesFromAssembly(Assembly).SelectMany(AccessTools.GetDeclaredMethods))
+        {
+            if (method.GetCustomAttribute<OnPluginDisabledAttribute>() is null)
+                continue;
+            
+            if (!method.IsStatic)
+            {
+                Log.Warn($"Failed to invoke method {method.DeclaringType}::{method.Name} on plugin disabled, as it is not static.");
+                continue;
+            }
+            
+            if (method.GetParameters().Length != 0)
+            {
+                Log.Warn($"Failed to invoke method {method.DeclaringType}::{method.Name} on plugin disabled, as it contains parameters.");
+                continue;
+            }
+            
             try
             {
                 method.Invoke(null, null);
