@@ -1,7 +1,8 @@
-﻿namespace GRPP.API.Features.CustomItems;
+﻿namespace GRPP.API.Core.CustomItems;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Exiled.API.Features;
 using InventorySystem.Items;
 using InventorySystem.Items.Pickups;
@@ -9,8 +10,8 @@ using Logger = LabApi.Features.Console.Logger;
 
 public sealed class CustomItemContainer
 {
-    private readonly HashSet<ushort> _serials = [];
-
+    public readonly HashSet<ushort> Serials = [];
+    
     public void RegisterItem(ItemPickupBase? pickup)
     {
         if (!pickup)
@@ -19,95 +20,90 @@ public sealed class CustomItemContainer
             throw new ArgumentNullException(nameof(pickup));
         }
 
-        _serials.Add(pickup.Info.Serial);
+        Serials.Add(pickup.Info.Serial);
     }
-
+    
     public void RegisterItem(ItemBase item)
     {
         if (!item)
             throw new ArgumentNullException(nameof(item));
 
-        _serials.Add(item.ItemSerial);
+        Serials.Add(item.ItemSerial);
     }
-
+    
     public void RegisterItem(ushort serial)
     {
-        _serials.Add(serial);
+        Serials.Add(serial);
     }
-
+    
     public void RemoveItem(ItemPickupBase pickup)
     {
         if (pickup == null)
             return;
-
-        _serials.Remove(pickup.Info.Serial);
+        
+        Serials.Remove(pickup.Info.Serial);
     }
-
+    
     public void RemoveItem(ItemBase item)
     {
         if (item == null)
             return;
-
-        _serials.Remove(item.ItemSerial);
+        
+        Serials.Remove(item.ItemSerial);
     }
-
+    
     public void RemoveItem(ushort serial)
     {
-        _serials.Remove(serial);
+        Serials.Remove(serial);
     }
-
+    
     public bool HasItem(ItemPickupBase pickup)
     {
-        return pickup && _serials.Contains(pickup.Info.Serial); // return pickup is LITERALLY Just /* if (pickup == null) return; _serials.Contains(pickup.Info.Serial); */ - which is SO cool.
+        return pickup && Serials.Contains(pickup.Info.Serial); // return pickup is LITERALLY Just /* if (pickup == null) return; _serials.Contains(pickup.Info.Serial); */ - which is SO cool.
     }
-
+    
     public bool HasItem(ItemBase item)
     {
-        return item && _serials.Contains(item.ItemSerial);
+        return item && Serials.Contains(item.ItemSerial);
     }
-
+    
     public bool HasItem(ushort serial)
     {
-        return _serials.Contains(serial);
+        return Serials.Contains(serial);
     }
-
+    
     public void ClearItems()
     {
-        _serials.Clear();
+        Serials.Clear();
     }
 }
 
 public sealed class CustomItemContainer<T>
 {
-    private readonly Dictionary<ushort, T> _serials;
-
-    public CustomItemContainer()
-    {
-        _serials = new();
-    }
-
+    private readonly Dictionary<ushort, T> _serials = new();
+    
     public void RegisterItem(ItemPickupBase pickup, T value)
     {
         if (pickup == null)
             throw new ArgumentNullException(nameof(pickup));
-
+        
         if (value == null)
             throw new ArgumentNullException(nameof(value));
-
+        
         _serials.Add(pickup.Info.Serial, value);
     }
-
+    
     public void RegisterItem(ItemBase item, T value)
     {
         if (item == null)
             throw new ArgumentNullException(nameof(item));
-
+        
         if (value == null)
             throw new ArgumentNullException(nameof(value));
-
+        
         _serials.Add(item.ItemSerial, value);
     }
-
+    
     public bool RegisterItem(ushort serial, T value)
     {
         if (Equals(value, default(T)))
@@ -119,117 +115,91 @@ public sealed class CustomItemContainer<T>
         _serials.Add(serial, value);
         return true;
     }
-
+    
     public void SetItemValue(ItemPickupBase pickup, T value)
     {
         if (pickup == null)
             throw new ArgumentNullException(nameof(pickup));
-
+        
         if (!HasItem(pickup))
             throw new ArgumentException("Key is not present in the dictionary.", nameof(pickup));
-
+        
         if (value == null)
             throw new ArgumentNullException(nameof(value));
-
+        
         _serials[pickup.Info.Serial] = value;
     }
-
+    
     public void SetItemValue(ItemBase item, T value)
     {
         if (item == null)
             throw new ArgumentNullException(nameof(item));
-
+        
         if (!HasItem(item))
             throw new ArgumentException("Key is not present in the dictionary.", nameof(item));
-
+        
         if (value == null)
             throw new ArgumentNullException(nameof(value));
-
+        
         _serials[item.ItemSerial] = value;
     }
-
+    
     public void SetItemValue(ushort serial, T value)
     {
         if (!HasItem(serial))
             throw new ArgumentException("Key is not present in the dictionary.", nameof(serial));
-
+        
         if (value == null)
             throw new ArgumentNullException(nameof(value));
-
+        
         _serials[serial] = value;
     }
-
+    
     public void RemoveItem(ItemPickupBase pickup)
     {
         if (pickup == null)
             return;
-
+        
         _serials.Remove(pickup.Info.Serial);
     }
-
+    
     public void RemoveItem(ItemBase item)
     {
-        if (item == null)
-            return;
-
-        _serials.Remove(item.ItemSerial);
+        if (item != null)
+            _serials.Remove(item.ItemSerial);
     }
-
-    public void RemoveItem(ushort serial)
+    
+    public void RemoveItem(ushort serial) => _serials.Remove(serial);
+    
+    
+    public bool HasItem(ItemPickupBase pickup) => pickup != null && _serials.ContainsKey(pickup.Info.Serial);
+    
+    
+    public bool HasItem(ItemBase item) => item != null && _serials.ContainsKey(item.ItemSerial);
+    
+    
+    public bool HasItem(ushort serial) => _serials.ContainsKey(serial);
+    
+    [MemberNotNullWhen(true)]
+    public bool HasItem(ItemPickupBase pickup, out T? value)
     {
-        _serials.Remove(serial);
+        if (pickup != null)
+            return _serials.TryGetValue(pickup.Info.Serial, out value);
+        
+        value = default;
+        return false;
     }
-
-    public bool HasItem(ItemPickupBase pickup)
+    
+    [MemberNotNullWhen(true)]
+    public bool HasItem(ItemBase item, out T? value)
     {
-        if (pickup == null)
-            return false;
-
-        return _serials.ContainsKey(pickup.Info.Serial);
+        if (item != null)
+            return _serials.TryGetValue(item.ItemSerial, out value);
+        
+        value = default;
+        return false;
     }
-
-    public bool HasItem(ItemBase item)
-    {
-        if (item == null)
-            return false;
-
-        return _serials.ContainsKey(item.ItemSerial);
-    }
-
-    public bool HasItem(ushort serial)
-    {
-        return _serials.ContainsKey(serial);
-    }
-
-    public bool HasItem(ItemPickupBase pickup, out T value)
-    {
-        if (pickup == null)
-        {
-            value = default;
-            return false;
-        }
-
-        return _serials.TryGetValue(pickup.Info.Serial, out value);
-    }
-
-    public bool HasItem(ItemBase item, out T value)
-    {
-        if (item == null)
-        {
-            value = default;
-            return false;
-        }
-
-        return _serials.TryGetValue(item.ItemSerial, out value);
-    }
-
-    public bool HasItem(ushort serial, out T value)
-    {
-        return _serials.TryGetValue(serial, out value);
-    }
-
-    public void ClearItems()
-    {
-        _serials.Clear();
-    }
+    
+    public bool HasItem(ushort serial, out T value) => _serials.TryGetValue(serial, out value);
+    public void ClearItems() => _serials.Clear();
 }
