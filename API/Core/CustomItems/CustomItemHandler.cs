@@ -1,4 +1,4 @@
-﻿namespace GRPP.API.Features.CustomItems;
+﻿namespace GRPP.API.Core.CustomItems;
 
 using InventorySystem.Items;
 using InventorySystem.Items.Pickups;
@@ -9,7 +9,7 @@ public abstract class CustomItemHandler
     public abstract string[] Alias { get; }
 
     public abstract void EnableEvents();
-
+    public abstract void DisableEvents();
     public virtual bool HasItem(ItemPickupBase pickup)
     {
         return HasItem(pickup.Info.Serial);
