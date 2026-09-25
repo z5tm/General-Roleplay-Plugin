@@ -1,4 +1,4 @@
-﻿namespace GRPP.API.Features.CustomItems;
+﻿namespace GRPP.API.Core.CustomItems;
 
 using System;
 using System.Collections.Generic;
@@ -70,7 +70,19 @@ public static class CustomItemsManager
 
         IsEnabled = true;
     }
-
+    
+    [OnPluginDisabled]
+    internal static void DisableEvents()
+    {
+        if (!IsEnabled)
+            return;
+        
+        foreach (var handler in ItemHandlers)
+            handler.Value.DisableEvents();
+        
+        IsEnabled = false;
+    }
+    
     private static void WaitingForPlayers()
     {
         foreach (var handler in ItemHandlers)
