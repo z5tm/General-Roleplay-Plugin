@@ -1,7 +1,7 @@
 ﻿namespace GRPP.API.Core;
 
 using System;
-using Features.CustomItems;
+using CustomItems;
 using InventorySystem;
 using InventorySystem.Items;
 
