@@ -31,5 +31,9 @@ public static class PlayerInformationHandler
         Players.Add(ev.Player.Nickname, ev.Player.Id);
     }
     
-    private static void RemovePlayerName(LeftEventArgs ev) => Players.Remove(ev.Player.Nickname);
+    private static void RemovePlayerName(LeftEventArgs ev)
+    {
+        if (ev.Player?.Nickname != null)
+            Players.Remove(ev.Player.Nickname);
+    }
 }
